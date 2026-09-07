@@ -29,7 +29,8 @@ My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD stude
 [McDevitt-Irwin Lab](https://www.jamiemcdevittirwin.com/) at UH Mānoa! I study coral reef ecology and I love watching cleaner wrasse stations :)  
 
 
-![_Image from Keoki Stender_](https://marinelifephotography.com/fishes/puffers/arothron-meleagris-cleaner-2.jpg)
+![Cleaner wrasse](https://marinelifephotography.com/fishes/puffers/arothron-meleagris-cleaner-2.jpg)  
+_Image from Keoki Stender_
 
 
 

@@ -10,18 +10,27 @@ Repository will be updated weekly with new homework & coursework.
 #### Table of Contents:  
 * [**Week 2**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_2) 
   * First script, reading in 'weightdata.csv' with _here_ package
-
+* [**Week 3**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_3) 
+  * Intro to plotting & ggplot, using data on penguins in Palmer Archipelago
+  
 #### Repository Structure:
 ```text
 ├── MBIO612_Fall26_NGS.Rproj
 ├── README.html
 ├── README.md
-└── Week_2
-    ├── Data
-    │   └── weightdata.csv
+├── Week_2
+│   ├── Data
+│   │   └── weightdata.csv
+│   ├── Output
+│   └── Scripts
+│       ├── Week_2_Reading.R
+│       └── Week_2_Script.R
+└── Week_3
     ├── Output
+    │   ├── penguin_plot_hw.png
+    │   └── sillypenguin.png
     └── Scripts
-        └── Week_2_Script.R
+        └── Week_3_Script.R
 ```
 
 ##### About me:

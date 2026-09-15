@@ -74,8 +74,7 @@ beyonceplot <- ggplot(data=penguins,  #using penguins data for plot
         legend.box.background = element_rect(color = "purple", linewidth = 2),
         legend.background = element_rect(fill = "white"))
 beyonceplot
-
-ggsave(here("Week_3", "Output", "sillypenguin.png"),
+ggsave(here("Week_3", "Output", "beyonce_penguin.png"),
        width = 7, height = 5) #playing around with height and width to save
 
 #practicing transforming coordinates on diamonds data

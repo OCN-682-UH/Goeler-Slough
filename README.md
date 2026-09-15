@@ -23,12 +23,11 @@ Repository will be updated weekly with new homework & coursework.
 │   │   └── weightdata.csv
 │   ├── Output
 │   └── Scripts
-│       ├── Week_2_Reading.R
 │       └── Week_2_Script.R
 └── Week_3
     ├── Output
     │   ├── penguin_plot_hw.png
-    │   └── sillypenguin.png
+    │   └── beyonce_penguin.png
     └── Scripts
         └── Week_3_Script.R
 ```

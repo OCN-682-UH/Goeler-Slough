@@ -12,6 +12,8 @@ Repository will be updated weekly with new homework & coursework.
   * First script, reading in 'weightdata.csv' with _here_ package
 * [**Week 3**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_3) 
   * Intro to plotting & ggplot, using data on penguins in Palmer Archipelago
+* [**Week 4**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_4) 
+  * Learning data wrangling in dplyr and tidyr
   
 #### Repository Structure:
 ```text
@@ -30,6 +32,20 @@ Repository will be updated weekly with new homework & coursework.
     │   └── beyonce_penguin.png
     └── Scripts
         └── Week_3_Script.R
+└── Week_4
+    ├── Data
+    │   ├── chem_data_dictionary.csv
+    │   └── chemicaldata_maunalua.csv
+    ├── Output
+    │   ├── hw4a_penguin_plot.png
+    │   ├── hw4b_biogeochemistry_plot.png
+    │   ├── hw4b_summary.csv
+    │   └── summary.csv
+    └── Scripts
+        ├── Week_4_Class.R
+        ├── Week_4_Lecture.R
+        ├── Week_4a_Homework.R
+        └── Week_4b_Homework.R
 ```
 
 ##### About me:

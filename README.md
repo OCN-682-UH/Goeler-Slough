@@ -14,8 +14,19 @@ Repository will be updated weekly with new homework & coursework.
   * Intro to plotting & ggplot, using data on penguins in Palmer Archipelago
 * [**Week 4**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_4) 
   * Learning data wrangling in dplyr and tidyr
-  
-#### Repository Structure:
+
+
+##### About me:
+My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 
+[McDevitt-Irwin Lab](https://www.jamiemcdevittirwin.com/) at UH Mānoa! I study coral reef ecology and I love watching cleaner wrasse stations :)  
+
+
+![Cleaner wrasse](https://marinelifephotography.com/fishes/puffers/arothron-meleagris-cleaner-2.jpg)  
+_Image from Keoki Stender_
+
+___
+ 
+#### Repository Structure & Contents:
 ```text
 ├── MBIO612_Fall26_NGS.Rproj
 ├── README.html
@@ -47,15 +58,6 @@ Repository will be updated weekly with new homework & coursework.
         ├── Week_4a_Homework.R
         └── Week_4b_Homework.R
 ```
-
-##### About me:
-My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 
-[McDevitt-Irwin Lab](https://www.jamiemcdevittirwin.com/) at UH Mānoa! I study coral reef ecology and I love watching cleaner wrasse stations :)  
-
-
-![Cleaner wrasse](https://marinelifephotography.com/fishes/puffers/arothron-meleagris-cleaner-2.jpg)  
-_Image from Keoki Stender_
-
 
 
 

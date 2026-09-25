@@ -13,7 +13,10 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 3**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_3) 
   * Intro to plotting & ggplot, using data on penguins in Palmer Archipelago
 * [**Week 4**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_4) 
-  * Learning data wrangling in dplyr and tidyr
+  * Data wrangling in dplyr and tidyr
+* [**Week 5**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_5) 
+  * Data wrangling: joins and dates in lubridate
+  * Fun advanced plotting (patchwork, ggrepel, gganimate, plotly, magick)
 
 
 ##### About me:
@@ -57,6 +60,21 @@ ___
         ├── Week_4_Lecture.R
         ├── Week_4a_Homework.R
         └── Week_4b_Homework.R
+└── Week_5
+    ├── Data
+    │   ├── CondData.csv
+    │   ├── DepthData.csv
+    │   ├── Topt_data.csv
+    │   ├── data_dictionary.csv
+    │   └── site.characteristics.data.csv
+    ├── Output
+    │   ├── penguin_animation.gif
+    │   ├── penguinplot.png
+    │   └── salinity_depth_plot_HW.png
+    └── Scripts
+        ├── Week_5_Class.R
+        ├── Week_5_HW.R
+        └── Week_5_Lecture.R
 ```
 
 

@@ -17,6 +17,8 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 5**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_5) 
   * Data wrangling: joins and dates in lubridate
   * Fun advanced plotting (patchwork, ggrepel, gganimate, plotly, magick)
+* [**Week 6**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_6) 
+  * Quarto! [(Class Quarto practice)](https://01a0efa4-c52b-5da3-fffc-3a7358b1251a.share.connect.posit.cloud/)
 
 
 ##### About me:

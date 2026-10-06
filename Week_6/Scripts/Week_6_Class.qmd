@@ -15,7 +15,7 @@ library(tidyverse)
 
 ### About this dataset:
 
-This dataset has data on `r nrow(penguins)` penguins, with `r c` species across `r n_distinct(penguins$island)` islands.  The species included are `r unique(penguins$species)`.
+This dataset has data on `r nrow(penguins)` penguins, with `r ` species across `r n_distinct(penguins$island)` islands.  The species included are `r unique(penguins$species)`.
 
 The average weight across all penguins is `r round(mean(penguins$body_mass_g, na.rm = TRUE), digits = 0)` grams, with a maximum weight of `r round(max(penguins$body_mass_g, na.rm = TRUE), digits = 0)` grams, and a minimum weight of `r round(min(penguins$body_mass_g, na.rm = TRUE), digits = 0)` grams.
 

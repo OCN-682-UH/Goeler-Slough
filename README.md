@@ -18,7 +18,8 @@ Repository will be updated weekly with new homework & coursework.
   * Data wrangling: joins and dates in lubridate
   * Fun advanced plotting (patchwork, ggrepel, gganimate, plotly, magick)
 * [**Week 6**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_6) 
-  * Quarto! [(Class Quarto practice)](https://01a0efa4-c52b-5da3-fffc-3a7358b1251a.share.connect.posit.cloud/)
+  * Learning Quarto! [(Class Quarto practice)](https://01a0efa4-c52b-5da3-fffc-3a7358b1251a.share.connect.posit.cloud/)
+  * Quarto [homework assignment](https://01a10f42-30ad-1820-a279-116196e5f62b.share.connect.posit.cloud/)
 
 
 ##### About me:
@@ -32,6 +33,7 @@ _Image from Keoki Stender_
 ___
  
 #### Repository Structure & Contents:
+*some sections abbreviated for readability
 ```text
 ├── MBIO612_Fall26_NGS.Rproj
 ├── README.html
@@ -77,8 +79,15 @@ ___
         ├── Week_5_Class.R
         ├── Week_5_HW.R
         └── Week_5_Lecture.R
+└── Week_6
+    ├── Output
+    └── Scripts
+        ├── Week_6_Class.html
+        ├── Week_6_Class.qmd
+        ├── Week_6_HW.html
+        ├── Week_6_HW.qmd
+        ├── Week_6_Lecture.html
+        ├── Week_6_Lecture.qmd
+        └── rsconnect
 ```
-
-
-
 

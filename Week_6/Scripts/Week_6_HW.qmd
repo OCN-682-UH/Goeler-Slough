@@ -1,0 +1,152 @@
+---
+title: "Week 6 Homework: Quarto!"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+    theme: lux
+    
+---
+
+```{=html}
+<style>
+b, strong {
+  font-weight: 900 !important;
+}
+</style>
+```
+
+### Overview:
+For this homework assignment, I am going to:
+
+* Load in my required libraries  
+* Load and look at my data  
+* Create a figure visualizing my data  
+* Generate a table summarizing my data  
+* Summarize general findings  
+
+### 1. Loading libraries:
+
+```{r}
+#| message: false
+
+library(palmerpenguins) #loading palmer penguins package with 'penguins' dataset
+library(tidyverse)
+library(kableExtra)
+library(patchwork)
+```
+
+### 2. Loading data:
+
+Dataset is already included in **palmerpenguins** package; has data on penguins from the Palmer Archipelago.
+
+The dataset contains measurements for the variables: *`r head(names(penguins), -1)`*, and *`r tail(names(penguins), 1)`*.
+
+```{r}
+head(penguins) #looking at head of penguins data to remind myself of available variables
+```
+
+This dataset has data collected across **`r nrow(penguins)` total penguins**, with **`r n_distinct(penguins$species)` species** across **`r n_distinct(penguins$island)` islands**.
+
+##### The `r n_distinct(penguins$species)` species included are:
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png)
+
+##### Data was collected at the **Palmer Station LTER**, on the Antarctic Peninsula
+
+![](https://education.rstudio.com/blog/2020/07/palmerpenguins-cran/antarctica-map.png)
+
+### 3. Data analysis:
+First, I'm generating density plots to visualize the spread of the body measurements collected across each of the `r n_distinct(penguins$species)` species in this dataset.
+```{r}
+#| label: fig-penguinplot #now this plot is labeled as "penguinplot" and can be called
+#| fig-cap: "Density plots of bill depth, bill length, flipper length, and body mass for each of 3 species from Palmer LTER data. Count density (reflecting group size) is plotted for each measurement."
+#| fig-width: 10
+#| fig-height: 10
+depth <- penguins |>
+  ggplot(aes(x=bill_depth_mm, fill=species))+
+  geom_density(
+    aes(y = after_stat(count)),
+    alpha = 0.5,
+    color = NA) + #getting rid of black outlines
+  labs(
+    x = "Bill Depth (mm)",
+    y = "Density",
+    fill = "Species") +
+  theme_bw()+
+  theme(legend.position = "none")
+
+length <- penguins |>
+  ggplot(aes(x=bill_length_mm, fill=species))+
+  geom_density(
+    aes(y = after_stat(count)),
+    alpha = 0.5,
+    color = NA) + #getting rid of black outlines
+  labs(
+    x = "Bill Length (mm)",
+    y = "Density",
+    fill = "Species") +
+  theme_bw()+
+  theme(legend.position = "none")
+
+flipper <- penguins |>
+  ggplot(aes(x=flipper_length_mm, fill=species))+
+  geom_density(
+    aes(y = after_stat(count)),
+    alpha = 0.5,
+    color = NA) + #getting rid of black outlines
+  labs(
+    x = "Flipper Length (mm)",
+    y = "Density",
+    fill = "Species") +
+  theme_bw()+
+  theme(legend.position = "none")
+
+mass <- penguins |>
+  ggplot(aes(x=(body_mass_g)/1000, fill=species))+
+  geom_density(
+    aes(y = after_stat(count)),
+    alpha = 0.85,
+    color = NA) + #getting rid of black outlines
+  labs(
+    x = "Body Mass (kg)",
+    y = "Density",
+    fill = "Species") +
+  theme_bw()
+
+(depth / length / flipper / mass) +
+  theme(legend.position = "bottom")+
+  plot_annotation(title = "Penguin Body Measurements Across Species:")
+```
+Now, I'm creating a summary table with averages of each body measurement for each of the `r n_distinct(penguins$species)` species in this penguin dataset, and including sample size (n) to see the distribution of sampling effort.
+
+```{r}
+#| label: tbl-penguins
+#| tbl-cap: "Average penguin bill length, bill depth, flipper length, and body mass by species. Sample size (n) displayed for each species."
+penguins |>
+  group_by(species) |>
+  summarise(
+    "Bill Length (mm)" = mean(bill_length_mm, na.rm = TRUE),
+    "Bill Depth (mm)" = mean(bill_depth_mm, na.rm = TRUE),
+    "Flipper Length (mm)" = mean(flipper_length_mm, na.rm = TRUE),
+    "Body Mass (kg)" = (mean(body_mass_g, na.rm = TRUE)/1000),
+    "n" = n())|>
+  rename(Species = species) |> #making species variable name capitalized for table
+  kbl(digits=2, # make it a kable table, rounding to 2 digits
+      caption = "Average Body Measurements for Palmer Penguins") |> 
+  kable_classic() |> # add a theme, kable classic
+  column_spec(5, bold = TRUE, background = "turquoise") 
+  
+```
+
+#### Takeaways:
+
+As shown in @fig-penguinplot, body measurements (bill depth, bill length, flipper length, and body mass) vary across species. Mean values across species (with sample size) are summarized in @tbl-penguins.  
+
+Gentoo penguins have a greater body mass on average when compared to Adelie and Chinstrap species (@tbl-penguins), which as illustrated by @fig-penguinplot, may be linked to their larger flipper length.
+  
+  
+##### Thanks for reading!
+![](https://media.istockphoto.com/id/469337210/photo/penguin-waving-hi.jpg?s=612x612&w=0&k=20&c=KL9OjqGOX-3v7FSdh5wnB-3zN7FZJ_EG78k_jDJbxEM=)

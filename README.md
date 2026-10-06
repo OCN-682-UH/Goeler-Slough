@@ -33,7 +33,7 @@ _Image from Keoki Stender_
 ___
  
 #### Repository Structure & Contents:
-*some sections abbreviated for readability
+\*_some sections abbreviated for readability_
 ```text
 ├── MBIO612_Fall26_NGS.Rproj
 ├── README.html

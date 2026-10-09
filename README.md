@@ -20,6 +20,10 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 6**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_6) 
   * Learning Quarto! [(Class Quarto practice)](https://01a0efa4-c52b-5da3-fffc-3a7358b1251a.share.connect.posit.cloud/)
   * Quarto [homework assignment](https://01a10f42-30ad-1820-a279-116196e5f62b.share.connect.posit.cloud/)
+* [**Week 7**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_7) 
+  * Mapping: part 1, [in class](https://01a11e02-1709-3b25-0318-da5a5307a518.share.connect.posit.cloud/)
+  * Mapping: part 2, [lecture](https://01a11e04-7eb2-d8c4-91cb-f9303b221942.share.connect.posit.cloud/)
+  * Week 7 mapping [homework](https://01a11e57-60a2-1d23-90e7-bcd5fa105af7.share.connect.posit.cloud/)
 
 
 ##### About me:
@@ -82,13 +86,30 @@ ___
         └── Week_5_Lecture.R
 └── Week_6
     ├── Output
-    └── Scripts
         ├── Week_6_Class.html
-        ├── Week_6_Class.qmd
         ├── Week_6_HW.html
-        ├── Week_6_HW.qmd
         ├── Week_6_Lecture.html
+    └── Scripts
+        ├── Week_6_Class.qmd
+        ├── Week_6_HW.qmd
         ├── Week_6_Lecture.qmd
         └── rsconnect
+└── Week_7
+    ├── Data
+        ├── CAPopdata.csv
+        ├── chemicaldata_maunalua.csv
+        ├── stars.csv
+        └── tiles_cache
+    └── Ouput
+        ├── CApopstars.pdf
+        ├── maunalua_map.pdf
+        ├── Week_7_Class.html
+        ├── Week_7_HW.html
+        └── Week_7_Lecture.html     
+    └── Scripts
+        ├── rsconnect
+        ├── Week_7_Class.qmd
+        ├── Week_7_HW.qmd
+        └── Week_7_Lecture.qmd
 ```
 

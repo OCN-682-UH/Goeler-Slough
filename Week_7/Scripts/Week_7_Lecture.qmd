@@ -1,0 +1,227 @@
+---
+title: "Week_7_Lecture"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(tidyverse)
+library(here)
+library(sf)
+library(maptiles)
+library(tidyterra)
+library(leaflet)
+library(tidygeocoder)
+library(ggspatial)
+```
+
+## Loading data
+```{r}
+ChemData <- read_csv(here("Week_7", "Data", "chemicaldata_maunalua.csv"))
+
+glimpse(ChemData)
+```
+
+## Data analysis
+
+### Tile and satellite basemaps with {maptiles}:
+
+Using maptiles to get tile basemaps of Wailupe, Oahu -- setting a bounding box:
+```{r}
+# Define a bounding box around Wailupe, Oahu
+# xmin/xmax = westmost/eastmost longitude
+# ymin/ymax = southernmost/northernmost latitude
+wailupe_bbox <- st_as_sfc(
+  st_bbox(c(xmin = -157.772, ymin = 21.267,
+            xmax = -157.752, ymax = 21.281),
+          crs = 4326) # crs = 4326 means WGS84 — the lat/lon system your GPS uses
+)
+```
+
+Downloading the tiles:
+```{r}
+#downloading the tiles
+tiles_satellite <- get_tiles(
+  wailupe_bbox,               # the area to download
+  provider = "Esri.WorldImagery", # which tile source to use
+  zoom = 16,                  # level of detail (3 = continent, 20 = building)
+  crop = TRUE,                # clip to our exact bbox (vs. slightly larger)
+  cachedir = here("Week_7", "Data", "tiles_cache") # save tiles to disk (caching, so it runs faster)
+)
+class(tiles_satellite)
+```
+
+Plotting with geom_spatraster_rgb(), a tidyterra function
+```{r}
+# geom_spatraster_rgb() is from {tidyterra}
+# It reads the 3 color layers and renders them as a photo
+ggplot() +
+  geom_spatraster_rgb(data = tiles_satellite) +
+  coord_sf(crs = 4326) +
+  theme_minimal()
+```
+Deriving the bounding box (Bbox) from your Data, instead of hard-coding coordinates:
+```{r}
+# Step 1: convert your data frame to an sf object
+# coords tells sf which columns hold longitude and latitude
+ChemData_sf <- st_as_sf(ChemData,
+                         coords = c("Long", "Lat"),
+                         crs = 4326)
+
+# Step 2: get the bounding box and add a small buffer
+# the + c(...) pads all four sides by ~0.4 km so points aren't at the edge
+bbox_chem <- st_bbox(ChemData_sf) + c(-0.004, -0.004, 0.004, 0.004)
+
+# Step 3: download tiles for that extent
+Map_satellite <- get_tiles(
+  st_as_sfc(bbox_chem),
+  provider = "Esri.WorldImagery",
+  zoom = 15,
+  crop = TRUE,
+  cachedir = here("Week_7", "Data", "tiles_cache")
+)
+```
+
+### Overlaying data + annotations with {ggspatial}:
+
+Overlaying point data onto tile basemap:
+```{r}
+#plotting points from chemdata, colored by salinity (to see where freshwater vs seawater is)
+ggplot() +
+  geom_spatraster_rgb(data = Map_satellite) +
+  geom_point(data = ChemData,
+             aes(x = Long, y = Lat,
+                 color = Salinity),
+             size = 4) +
+  scale_color_viridis_c() +
+  coord_sf(crs = 4326) +
+  theme_minimal()
+```
+Adding a scale bar and north arrow (from ggspatial package):
+```{r}
+ggplot() +
+  geom_spatraster_rgb(data = Map_satellite) +
+  geom_point(data = ChemData,
+             aes(x = Long, y = Lat,
+                 color = Salinity),
+             size = 4) +
+  scale_color_viridis_c() +
+  annotation_scale(           # adding scale bar
+    location = "bl",          # location: bl = bottom-left
+    bar_cols = c("yellow", "white")) +
+  annotation_north_arrow(     # adding north arrow
+    location = "tl") +        # tl = top-left
+  coord_sf(crs = 4326) +
+  theme_minimal()
+```
+Polishing and saving:
+```{r}
+ggplot() +
+  geom_spatraster_rgb(data = Map_satellite) +
+  geom_point(data = ChemData,
+             aes(x = Long, y = Lat, color = Salinity),
+             size = 4) +
+  scale_color_viridis_c(name = "Salinity (ppt)") +
+  annotation_scale(location = "bl",
+                   bar_cols = c("yellow", "white")) +
+  annotation_north_arrow(location = "tl") +
+  coord_sf(crs = 4326) +
+  labs(title = "Maunalua Bay — Water Chemistry",
+       caption = "Basemap: ESRI World Imagery") +
+  theme_minimal()
+
+ggsave(here("Week_7", "Output", "maunalua_map.pdf"), width = 8, height = 6)
+```
+
+### Interactive maps with {leaflet}:
+
+Building my first leaflet map! Uses piping with |>
+```{r}
+leaflet() |>
+  addProviderTiles(providers$Esri.WorldImagery) |>
+  setView(lng = -157.762, lat = 21.274, zoom = 14) #sets initial view but you can zoom in/out and move
+```
+
+Adding a color palette to be able to plot with leaflet
+```{r}
+pal <- colorNumeric(
+  palette = "viridis",            # any RColorBrewer or viridis palette name
+  domain = ChemData$Salinity      # the full range of values to map
+)
+
+# Use it by calling pal(value) — it returns a hex color
+pal(30)  # what color does salinity = 30 get?
+pal(40)
+```
+
+Now adding data points with color:
+```{r}
+pal <- colorNumeric("viridis", domain = ChemData$Salinity)
+
+leaflet(ChemData) |>           # pass data frame here
+  addProviderTiles(providers$Esri.WorldImagery) |>
+  addCircleMarkers(
+    lng = ~Long, lat = ~Lat,   # which columns are coordinates (longitude and latitude, with ~ indicating a column)
+    color = ~pal(Salinity),    # apply our color function to Salinity, with the palette from before
+    radius = 6,
+    fillOpacity = 0.9,
+    popup = ~paste("Salinity:", Salinity, "ppt",  # click a point to see this (to see salinity)
+                   "<br>Site:", Site)) |>
+  addLegend(
+    pal = pal,                 # the same color function
+    values = ~Salinity,        # which column drives the legend
+    title = "Salinity (ppt)",
+    position = "bottomright")
+```
+
+
+### Geocoding with {tidygeocoder}:
+(Geocoding = converting a place name or address into latitude and longitude coordinates)
+
+```{r}
+geo("University of Hawaii at Manoa", method = "osm") #"osm" = open street maps, alternate: "census" = best for US street addresses
+
+geo("Pearl Harbor, Oahu, Hawaii", method = "osm") #doesn't come up, likely will have to be more specific
+
+```
+Geocoding a whole dataframe:
+```{r}
+oahu_sites <- tribble(
+  ~place,
+  "University of Hawaii at Manoa",
+  "Honolulu International Airport",
+  "Pearl Harbor National Memorial, Hawaii",
+  "Diamond Head State Monument, Hawaii"
+)
+
+oahu_geocoded <- oahu_sites |>
+  geocode(place, method = "osm") # geocode the 'place' column
+
+oahu_geocoded
+```
+Mapping geocoded locations using leaflet:
+```{r}
+leaflet(oahu_geocoded) |>
+  addProviderTiles(providers$Esri.WorldImagery) |>
+  addMarkers(
+    lng = ~long, lat = ~lat,   # tidygeocoder always returns 'lat' and 'long'
+    label = ~place)            # hover to see place name
+```
+
+### Today's totally awesome package: {emojifont}!
+```{r}
+library(emojifont)
+
+search_emoji("smile")
+
+ggplot() +
+  geom_emoji("smiley_cat",
+             x = 1:5, y = 1:5,
+             size = 10)
+```
+

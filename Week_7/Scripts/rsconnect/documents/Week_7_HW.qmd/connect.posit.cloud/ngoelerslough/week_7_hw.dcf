@@ -1,0 +1,12 @@
+name: week_7_hw
+title: Week_7_HW
+username: ngoelerslough
+account: ngoelerslough
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 01a11e57-60a2-1d23-90e7-bcd5fa105af7
+bundleId:
+url: https://connect.posit.cloud/ngoelerslough/content/01a11e57-60a2-1d23-90e7-bcd5fa105af7
+version: 1
+asMultiple: FALSE
+asStatic: TRUE

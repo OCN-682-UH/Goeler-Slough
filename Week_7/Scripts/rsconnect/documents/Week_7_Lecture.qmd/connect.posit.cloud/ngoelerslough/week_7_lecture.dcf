@@ -1,0 +1,12 @@
+name: week_7_lecture
+title: Week_7_Lecture
+username: ngoelerslough
+account: ngoelerslough
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 01a11e04-7eb2-d8c4-91cb-f9303b221942
+bundleId:
+url: https://connect.posit.cloud/ngoelerslough/content/01a11e04-7eb2-d8c4-91cb-f9303b221942
+version: 1
+asMultiple: FALSE
+asStatic: TRUE

@@ -24,7 +24,9 @@ Repository will be updated weekly with new homework & coursework.
   * Mapping: part 1, [in class](https://01a11e02-1709-3b25-0318-da5a5307a518.share.connect.posit.cloud/)
   * Mapping: part 2, [lecture](https://01a11e04-7eb2-d8c4-91cb-f9303b221942.share.connect.posit.cloud/)
   * Week 7 mapping [homework](https://01a11e57-60a2-1d23-90e7-bcd5fa105af7.share.connect.posit.cloud/)
-
+* [**Week 8**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_8) 
+  * Functional programming [in class](https://01a14c46-0ec6-1ebe-bc8b-57dfb15a126f.share.connect.posit.cloud/)
+  * Functions [homework](https://01a14c44-f3fa-8265-7bb8-aa4357853d08.share.connect.posit.cloud/)
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 
@@ -111,5 +113,20 @@ ___
         ├── Week_7_Class.qmd
         ├── Week_7_HW.qmd
         └── Week_7_Lecture.qmd
+└── Week_8
+    ├── Data
+    │   ├── annotations.csv
+    │   └── CoralNet_Labelset.csv
+    ├── Output
+    │   ├── class-figures-html
+    │   ├── hw-figures-html
+    │   ├── Week_8_Class.html
+    │   └── Week_8_HW.html
+    └── Scripts
+        ├── rsconnect
+        ├── Week_8_Class_files
+        ├── Week_8_Class.qmd
+        ├── Week_8_HW_files
+        └── Week_8_HW.qmd
 ```
 

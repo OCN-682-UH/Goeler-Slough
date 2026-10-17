@@ -1,0 +1,205 @@
+---
+title: "Week 8 Homework: Functions"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+    theme: lux
+---
+```{=html}
+<style>
+b, strong {
+  font-weight: 900 !important;
+}
+</style>
+```
+
+## Loading libraries
+```{r}
+library(here)
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+```
+
+
+## Loading data
+```{r}
+#| output: false
+coralnet <- read.csv(here("Week_8", "Data", "annotations.csv"))
+head(coralnet)
+glimpse(coralnet)
+
+labelset <- read.csv(here("Week_8", "Data", "CoralNet_Labelset.csv"))
+head(labelset)
+```
+
+
+## Data analysis
+
+### Function 1: Benthic Cover Summary Table
+
+My first goal is to make a function that can read in a CoralNet output .csv and generate a clear summary output table of benthic cover with broader functional group categories.
+
+First, I'm writing the code to do what I want on a small subset of data (only two photoquad outputs):
+```{r}
+#| output: false
+twoquads <- head(coralnet, 100)
+glimpse(twoquads)
+tail(twoquads)
+#starting by looking only at quadrat C and E and from 11/11/25 
+```
+
+Writing code to data wrangle and summarize to make a clean summary kable table:
+```{r}
+summary_table <- twoquads %>%
+  left_join(labelset, by = "Label.code") %>%
+  filter(!Label.code %in% c("OOQ","PVC","UNK","MOBL")) %>% #filtering out points that are unknown, outside quadrat, mobile fauna, or on PVC (not included in % cover calculations)
+  group_by(Name) %>%
+  mutate(Total.points = n()) %>% #calculating the total number of points included per quadrat for benthic cover calculations
+  group_by(Date, Site, GoPro.ID, Functional.group, ID.Name, Total.points) %>%
+  summarise(Point.count = n()) %>%
+  mutate(Percent.cover = round((Point.count / Total.points) * 100, 2)) %>% #converting point count to percent cover, rounding to 2 decimal places 
+  select(!c(Total.points, Point.count)) %>%
+  kbl(col.names = c('Date', 'Site', 'Quadrat', 'Functional Group', 'Benthic ID', 'Percent Cover (%)')) %>%
+  collapse_rows(columns = 1:4, #collapsing/collecting rows that are the same in columns 1-4 (will be repeated for multiple rows so don't want to re-print)
+                target = 3, #collapsing by quadrat ID column, so that it still prints date and site for each quadrat
+                valig = "top") #aligning collapsed text to the top 
+summary_table
+```
+*Note: For my purposes, it makes sense to keep each quadrat summarized separately, since each quadrat corresponds to a paired video behavioral assay. For broader purposes / future directions, I could also take this a step farther to average across all quadrats for each site and day.*
+
+**Making my code into a function that can be used more broadly:**
+```{r}
+
+benthic_table <- function(data, labelset, exclude_codes = c("OOQ", "PVC", "UNK", "MOBL")) { #these exclude codes can be changed based on specific project / investigation
+  data %>%
+    left_join(labelset, by = "Label.code") %>%
+    filter(!Label.code %in% exclude_codes) %>% #filtering out points that are in pre-defined exclude codes: for my purposes, unknown, outside quadrat, or on PVC
+    group_by(Name) %>%
+    mutate(Total.points = n()) %>% #calculating the total number of points included per quadrat for benthic cover calculations
+    group_by(Date, Site, GoPro.ID, Functional.group, ID.Name, Total.points) %>%
+    summarise(Point.count = n()) %>%
+    mutate(Percent.cover = round((Point.count / Total.points) * 100, 2)) %>% #converting point count to percent cover, rounding to 2 decimal places 
+    select(!c(Total.points, Point.count)) %>%
+    kbl(col.names = c('Date', 'Site', 'Quadrat', 'Functional Group', 'Benthic ID', 'Percent Cover (%)')) %>%
+    collapse_rows(columns = 1:4, #collapsing/collecting rows that are the same in columns 1-4 (will be repeated for multiple rows so don't want to re-print)
+                target = 3, #collapsing by quadrat ID column, so that it still prints date and site for each quadrat
+                valig = "top") #aligning collapsed text to the top 
+}
+```
+
+Testing, on my smaller dataframe w/ 2 quadrats and then with a fuller dataset:
+```{r}
+#two quadrats
+benthic_table(twoquads, labelset)
+
+#fuller dataset
+benthic_table(coralnet, labelset)
+```
+
+### Function 2: Stacked barplot of benthic cover
+
+Now, I want to create a function that will make a summary barplot of the benthic cover categories. First, I'll write the code to accomplish this.
+
+```{r}
+#data wrangling to get summarized data
+summarized_data <- twoquads %>%
+  left_join(labelset, by = "Label.code") %>%
+  filter(!Label.code %in% c("OOQ","PVC","UNK","MOBL")) %>% #filtering out points that are unknown, outside quadrat, mobile fauna, or on PVC (not included in % cover calculations)
+  group_by(Name) %>%
+  mutate(Total.points = n()) %>% #calculating the total number of points included per quadrat for benthic cover calculations
+  group_by(Date, Site, GoPro.ID, Subcategory, Label.code, ID.Name, Total.points) %>%
+  summarise(Point.count = n()) %>%
+  mutate(Percent.cover = round((Point.count / Total.points) * 100, 2)) #converting point count to percent cover, rounding to 2 decimal places
+```
+
+```{r}
+#making benthic color palette, that makes sense biologically for the groups that they're encoding
+benthic_pal <- c(
+  "Coral" = "#C0504D",
+  "CCA" = "#F4C2C2",
+  "Macroalgae" = "#0F3800",
+  "Turf" = "#16A34A",
+  "Sand" = "#E8D8B0",
+  "Urchin" = "#5E50A1",
+  "Other Invertebrates" = "#0096C7",
+  "Cyanobacteria" = "#5C1A48"
+)
+```
+
+
+```{r}
+ggplot(summarized_data, aes(x=GoPro.ID, y=Percent.cover, fill=Subcategory))+
+  geom_col()+
+  geom_text( #adding text to plot the % turf cover (the highest cover across my quadrats, important for me because I'm relating these plots to grazing rates)
+    data = summarized_data %>%
+      group_by(Site, Date, GoPro.ID) %>%
+      filter(Subcategory == "Turf") %>% #filtering for the multiple label codes that are all more broadly classified as turf
+      summarise(Total.turf = sum(Percent.cover), .groups = "drop"), #getting a value for the total turf for each quadrat
+    aes(x = GoPro.ID, 
+      y = Total.turf / 2, #positions the turf % label in the middle of the combined turf chunk
+      label = paste0(round(Total.turf), "%")
+    ),
+    inherit.aes = FALSE, #prevents ggplot from looking for 'Subcategory' in this geom text layer
+    color = "white", size = 3, fontface = "bold") + #changing text font size/color + bolding
+  scale_fill_manual(values = benthic_pal)+ #changing colors to pre-defined benthic color palette
+  facet_wrap(~ Site + Date, scales = "free_x", strip.position = "bottom") +
+  labs(x = "Quadrat",
+    y = "Percent Cover",
+    fill = "Benthic Category",
+    title = "Benthic Cover by Quadrat"
+  )+
+  theme_minimal()
+```
+*For the code above, I also printed the total turf cover (important for me because I'm relating these benthic cover plots to herbivorous fish grazing), but for the function below, I got rid of this to make the figure simpler/more versatile.*
+
+
+**Now, making the above chunks into a function:**
+```{r}
+benthic_plot <- function(benthicdata, labelset, exclude_codes = c("OOQ", "PVC", "UNK", "MOBL")) {
+  
+  benthic_pal <- c(
+  "Coral" = "#C0504D",
+  "CCA" = "#F4C2C2",
+  "Macroalgae" = "#0F3800",
+  "Turf" = "#16A34A",
+  "Sand" = "#E8D8B0",
+  "Urchin" = "#5E50A1",
+  "Other Invertebrates" = "#0096C7",
+  "Cyanobacteria" = "#5C1A48"
+)
+  
+  benthicdata %>%
+    left_join(labelset, by = "Label.code") %>%
+    filter(!Label.code %in% exclude_codes) %>% #filtering out points that are in pre-defined exclude codes: for my purposes, unknown, outside quadrat, or on PVC
+    group_by(Name) %>%
+    mutate(Total.points = n()) %>% #calculating the total number of points included per quadrat for benthic cover calculations
+    group_by(Date, Site, GoPro.ID, Subcategory, Label.code, ID.Name, Total.points) %>%
+    summarise(Point.count = n()) %>%
+    mutate(Percent.cover = round((Point.count / Total.points) * 100, 2)) %>%
+    
+    ggplot(aes(x=GoPro.ID, y=Percent.cover, fill=Subcategory))+
+    geom_col()+
+    scale_fill_manual(values = benthic_pal)+ #changing colors to pre-defined benthic color palette
+    facet_wrap(~ Site + Date, scales = "free_x", strip.position = "bottom") +
+    labs(x = "Quadrat",
+         y = "Percent Cover",
+         fill = "Benthic Category",
+         title = "Benthic Cover by Quadrat"
+         )+
+    theme_minimal()
+}
+```
+
+Testing my new function, with smaller 2-quadrat subset and then with fuller dataset:
+```{r}
+#two quadrats
+benthic_plot(twoquads, labelset)
+
+#fuller datset
+benthic_plot(coralnet, labelset)
+```
+

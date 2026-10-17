@@ -1,0 +1,37 @@
+Label.code,ID.Name,Subcategory,Functional.group
+B_HC,Bleached Hard Coral,Coral,Hard Coral
+Cypha,Cyphastrea,Coral,Hard Coral
+Lepto,Leptoseris,Coral,Hard Coral
+Lobac,Lobactis,Coral,Hard Coral
+Monti,Montipora,Coral,Hard Coral
+OTH_HC,Other hard coral,Coral,Hard Coral
+Pavona,Pavona,Coral,Hard Coral
+Pocill,Pocillopora,Coral,Hard Coral
+Porites,Porites,Coral,Hard Coral
+CUCU,Sea cucumber,Other Invertebrates,Other Invertebrates
+Dpau,Diadema paucispinum,Urchin,Other Invertebrates
+Eaci,Echinostrephus aciculatus,Urchin,Other Invertebrates
+Ecalam,Echinothrix calamaris,Urchin,Other Invertebrates
+Emath,Echinometra mathaei,Urchin,Other Invertebrates
+Eobl,Echinometra oblonga,Urchin,Other Invertebrates
+Hmam,Heterocentrotus mamillatus,Urchin,Other Invertebrates
+OTH-SINV,Other sessile invertebrates,Other Invertebrates,Other Invertebrates
+SC,Soft Coral,Other Invertebrates,Other Invertebrates
+SPONG,Sponge,Other Invertebrates,Other Invertebrates
+Tgrat,Tripneustes gratilla,Urchin,Other Invertebrates
+ZOAN,Zoanthid,Other Invertebrates,Other Invertebrates
+SAND,Sand,Sand,Sand
+CYANO,Cyanobacteria,Cyanobacteria,Other
+MOBILE,Mobile fauna,Mobile fauna,Other
+OOQ,Outside quadrat,Not included,Not included
+PVC,PVC,Not included,Not included
+UNK,Unknown,Not included,Not included
+CCAG,CCA green,CCA,Algae
+CCAH,CCA on hard substrate,CCA,Algae
+CCAR,CCA on rubble,CCA,Algae
+MA_EN,Encrusting Macroalgae,Macroalgae,Algae
+MAL,Macroalgae,Macroalgae,Algae
+Stubby,Lithophyllum spp.,CCA,Algae
+Turf_H,Turf on hard substrate,Turf,Algae
+Turf_R,Turf on rubble,Turf,Algae
+Turf_S,Turf and sand,Turf,Algae

@@ -109,15 +109,16 @@ Making base plot of incident notional cost, longitude/latitude (not mapped as yo
 #| output: false
 alldata <- left_join(badplot_data, icon_mapping, by = "animal_group") #adding icon mapping to dataset
   
+#separating into cat and dog data (based on icon mapping above) for plotting
 cat_data <- alldata %>% filter(avatar_type == "cat", !is.na(avatar_name))
 dog_data <- alldata %>% filter(avatar_type == "dog", !is.na(avatar_name))
 
 plot <- ggplot()+
-  geom_cat(data = cat_data,
-           aes(x = incident_notional_cost, y = latitude,
+  geom_cat(data = cat_data, #plotting cat data as one layer using ggcats
+           aes(x = (1/incident_notional_cost), y = latitude, #plotting 1/cost
                cat = as.character(avatar_name), size = longitude))+
-  geom_dog(data = dog_data,
-           aes(x = incident_notional_cost, y = latitude,
+  geom_dog(data = dog_data, #plotting dog data as another layer using ggdogs
+           aes(x = (1/incident_notional_cost), y = latitude,
                dog = as.character(avatar_name), size = longitude))+
   theme( #making everything neon and ugly
     panel.background = element_rect(fill = "#FF007F"),
@@ -129,7 +130,7 @@ plot <- ggplot()+
   ) +
   labs(
     title = "fire rescues",
-    x = "cost",
+    x = "cost-¹",
     y = "latitude"
   )
 plot
@@ -174,10 +175,10 @@ Now I'm animating the rescue plot with {gganimate} so that it changes for each c
 ```{r animated plot}
 animatedplot <- ggplot()+
   geom_cat(data = cat_data,
-           aes(x = incident_notional_cost, y = latitude,
+           aes(x = (1/incident_notional_cost), y = latitude,
                cat = as.character(avatar_name), size = longitude))+
   geom_dog(data = dog_data,
-           aes(x = incident_notional_cost, y = latitude,
+           aes(x = (1/incident_notional_cost), y = latitude,
                dog = as.character(avatar_name), size = longitude))+
   theme( #making everything neon and ugly
     panel.background = element_rect(fill = "#FF007F"),
@@ -194,7 +195,7 @@ animatedplot <- ggplot()+
   ease_aes('elastic-in-out')+ #makes elastic in-n-out motion on transitions
   labs(
     title = "fire rescues {closest_state}",
-    x = "cost",
+    x = "cost-¹",
     y = "latitude"
   )
 
@@ -215,7 +216,8 @@ This plot is bad for many reasons:
 * The legend icons are tiny and make it hard to determine which icon is being plotted to which animal
 * The plotted icons are overlapping so much that you can't visualize what's happening, especially at the lower cost values. (Goes against principles in mapping data onto visual features, with overplotting that conceals data distribution.)
 * The transitions are quite fast and make it hard to see what's going on, and the transition animation bouncing only makes it harder to visualize/interpret
-* Cost (on the x-axis) isn't defined / the units aren't specified, making it unclear what exactly is being plotted. Additionally, all the cost numbers are flipped upside down, making it even more annoying to read
+* Cost (on the x-axis) is plotted as 1/cost (indicated by the -1), making it very hard to actually interpret what the numbers mean. (Very misleading plotting for aesthetic mapping, inverting the scale sizing)
+* Cost units also aren't defined, making it unclear what exactly is being plotted. Additionally, all the cost numbers are flipped upside down, making it even more annoying to read
 * The neon background colors add to the visual overstimulation (what Wilke would probably call an "ugly" plot, breaking principles of using color to encode meaningful variables)
 * Longitude and latitude aren't plotted against each other as would make sense; the size of the icon is the only place you can visualize longitude
 * Even if you had latitude and longitude on each axis, these would be plotted without context; these are somewhat meaningless without a reference frame. Most people probably wouldn't even be able to tell these data are from London! (Not following standards for mapping onto coordinate systems.)
@@ -252,7 +254,7 @@ rescues_clean <- animal_rescues %>%
 #defining reference cost values and labels for plotting the legend
 costs <- c(250, 500, 1000, 2000, 3000) #reference notional rescue cost values (in pounds)
 costlabels <- c("£250", "£500", "£1,000", "£2,000", "£3,000") #labels for reference mass values
-diameters <- 2 * ((costs)^1.1 * .004) #calculating diameters for legend based on scaling I'm using to plot
+diameters <- 2 * ((costs) * .007) #calculating diameters for legend based on scaling I'm using to plot
 named_breaks <- setNames(diameters, costlabels) #making a vector with calculated diameter values and labels of corresponding masses
 ```
 
@@ -304,7 +306,7 @@ for (animal in animal_list) {
     data = sub_df, #using the dataframe separated by each animal type to make each a layer
     lng = ~longitude, lat = ~latitude,
     color = ~pal(animal_color_group),
-    radius = ~(incident_notional_cost)^1.1 * .004, #scaled to visualize on map
+    radius = ~(incident_notional_cost) * .007, #scaled to visualize on map
     fillOpacity = .45,
     opacity = .6,
     group = animal, #grouping by animal so each layer is one animal
@@ -344,6 +346,7 @@ map |>
 This plot is good because:
 
 * Now these data are actually plotted onto a map, with basemap tiles allowing coordinates to be plotted in recognizeable areas. Interactive zoom feature allows viewers to zoom in and out of set area as much as they want for broader context or specific area investigations.
+* Cost is cleanly mapped to size (scaled to the size of the map), and legend is included for reference
 * While there is a ton of data plotted here, there are multiple ways in which it's simplified to still be able to interpret and explore visually:
   * Animals with less than 5 instances/rescues in the dataset are grouped into "Other" for coloring purposes on the map
   * There is a layers toggling feature added so that the viewer can select and un-select certain animal groups to explore more niche animals, get rid of overly abundant animals, etc.

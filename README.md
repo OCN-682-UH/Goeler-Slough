@@ -28,7 +28,8 @@ Repository will be updated weekly with new homework & coursework.
   * Functional programming [in class](https://01a14c46-0ec6-1ebe-bc8b-57dfb15a126f.share.connect.posit.cloud/)
   * Functions [homework](https://01a14c44-f3fa-8265-7bb8-aa4357853d08.share.connect.posit.cloud/)
 * [**Good Plot Bad Plot**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Goodplot_Badplot) 
-  * Making worst and best possible plots using the same data: [quarto output](https://01a14d63-5487-da00-d55f-184f8405dc26.share.connect.posit.cloud/)  
+  * Making worst and best plots using the same data: [quarto output](https://01a14d63-5487-da00-d55f-184f8405dc26.share.connect.posit.cloud/) 
+  * I used the London Fire Brigade animal rescues dataset, taken from tidytuesday
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 

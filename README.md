@@ -27,6 +27,8 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 8**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_8) 
   * Functional programming [in class](https://01a14c46-0ec6-1ebe-bc8b-57dfb15a126f.share.connect.posit.cloud/)
   * Functions [homework](https://01a14c44-f3fa-8265-7bb8-aa4357853d08.share.connect.posit.cloud/)
+* [**Good Plot Bad Plot**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Goodplot_Badplot) 
+  * Making worst and best possible plots using the same data: [quarto output](https://01a14d63-5487-da00-d55f-184f8405dc26.share.connect.posit.cloud/)  
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 
@@ -42,7 +44,25 @@ ___
 
 \*_some sections abbreviated for readability_
 ```text
-├── MBIO612_Fall26_NGS.Rproj
+├── Goodplot_Badplot
+│   ├── Output
+│   │   ├── badplot_animation.gif
+│   │   ├── badplot_rescues_static.png
+│   │   ├── dogcatlegend.png
+│   │   ├── figure-html
+│   │   │   ├── animated plot-1.gif
+│   │   │   ├── badplot legend-1.png
+│   │   │   ├── baseplot-1.png
+│   │   │   ├── combined animated plot-1.gif
+│   │   │   ├── combined animated plot-2.png
+│   │   │   ├── combined static plots-1.png
+│   │   │   ├── combining static plots-1.png
+│   │   └── goodplot_badplot.html
+│   └── Scripts
+│       ├── goodplot_badplot_files
+│       │   └── libs
+│       ├── goodplot_badplot.qmd
+│       └── rsconnect
 ├── README.html
 ├── README.md
 ├── Week_2

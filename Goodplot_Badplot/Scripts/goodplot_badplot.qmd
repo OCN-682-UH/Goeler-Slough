@@ -1,0 +1,352 @@
+---
+title: "OCN682 - Good Plot Bad Plot!"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+    theme: lux
+    text-align: left
+editor_options: 
+  chunk_output_type: console
+---
+```{=html}
+<style>
+b, strong {
+  font-weight: 900 !important;
+}
+</style>
+```
+```{css, echo=FALSE}
+.leaflet-control {
+  text-align: left !important;
+}
+.leaflet-control-layers label {
+  justify-content: flex-start !important;
+}
+```
+
+## Loading libraries
+```{r libraries}
+library(readr)
+library(leaflet)
+library(tidyverse)
+library(here)
+library(sf)
+library(leaflegend)
+library(RColorBrewer)
+library(ggdogs)
+library(ggcats)
+library(gganimate)
+library(patchwork)
+```
+
+## Loading data
+```{r loading data} 
+#| output: false
+animal_rescues <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2021/2021-06-29/animal_rescues.csv')
+head(animal_rescues)
+glimpse(animal_rescues)
+```
+This dataset contains information on non-fire incidents (also called 'special services') that the London Fire Brigade has attended to, for a variety of animal rescue endeavors. It is a tidytuesday dataset, that comes from London.gov by way of Data is Plural and Georgios Karamanis. It contains data on `r nrow(animal_rescues)` total animal rescues, from years `r min(animal_rescues$cal_year)` through `r max(animal_rescues$cal_year)`, with responses to `r n_distinct(animal_rescues$animal_group_parent)` types of animals.
+
+## Data analysis
+
+### 1. Bad Plot:
+Data wrangling
+```{r badplot data wrangling}
+#data wrangling for badplot
+badplot_data <- animal_rescues %>%
+  filter(!is.na(animal_group_parent), !is.na(incident_notional_cost)) %>% #dropping NAs
+  filter(latitude > 30) %>% #getting rid of one weird outlier point
+  mutate(cal_year = as.numeric(cal_year), #making columns into numeric variables
+    incident_notional_cost = as.numeric(incident_notional_cost),
+    longitude = as.numeric(longitude),
+     latitude = as.numeric(latitude)) %>%
+  mutate(animal_group_parent = str_replace(animal_group_parent, "cat", "Cat")) %>% #fixing typo
+  drop_na(cal_year, latitude, longitude, incident_notional_cost, animal_group_parent) %>%
+  mutate(animal_group = as.character(
+      fct_lump_min(animal_group_parent, min = 2, other_level = "Other")))
+
+#looking at top animal groups
+summ <- badplot_data %>%
+  group_by(animal_group) %>%
+  summarise(total = n())
+```
+
+Setting up mapping for each animal from animal rescues dataset to be linked to an icon (dog or cat) from {ggcats} or {ggdogs}.
+```{r badplot icon mapping}
+#creating a map of each animal type to a ggcat or ggdog icon
+icon_mapping <- tribble(
+  ~animal_group,     ~avatar_type, ~avatar_name,
+  "Cat",                   "dog",        "husky_2",     
+  "Dog",                   "cat",        "toast",     
+  "Fox",                   "cat",        "lil_bub",
+  "Horse",                 "dog",        "doge",
+  "Deer",                  "cat",        "grumpy",
+  "Bird",                  "dog",        "pug",
+  "Squirrel",              "cat",        "shironeko",
+  "Hedgehog",              "dog",        "chihuahua",
+  "Fish",                  "cat",        "hipster",
+  "Snake",                 "dog",        "husky",
+  "Pigeon",                "cat",        "maru",
+  "Other",                 "dog",        "chilaquil",
+  "Ferret",                "cat",        "colonel",
+  "Goat",                  "cat",        "venus",
+  "Lamb",                  "dog",        "eyes",
+  "Cow",                   "cat",        "mouth",
+  "Sheep",                 "dog",        "ears",
+  "Unknown - Domestic Animal Or Pet",     "dog",     "lucy",
+  "Unknown - Wild Animal",    "cat",     "pop",
+  "Unknown - Heavy Livestock Animal",     "dog",     "puppie",
+  "Unknown - Animal rescue from water - Farm animal",     "dog",    "tail"
+)
+```
+
+Making base plot of incident notional cost, longitude/latitude (not mapped as you'd expect!), with dog and cat icons, and lots of aggresively neon theme colors.
+```{r baseplot}
+#| output: false
+alldata <- left_join(badplot_data, icon_mapping, by = "animal_group") #adding icon mapping to dataset
+  
+cat_data <- alldata %>% filter(avatar_type == "cat", !is.na(avatar_name))
+dog_data <- alldata %>% filter(avatar_type == "dog", !is.na(avatar_name))
+
+plot <- ggplot()+
+  geom_cat(data = cat_data,
+           aes(x = incident_notional_cost, y = latitude,
+               cat = as.character(avatar_name), size = longitude))+
+  geom_dog(data = dog_data,
+           aes(x = incident_notional_cost, y = latitude,
+               dog = as.character(avatar_name), size = longitude))+
+  theme( #making everything neon and ugly
+    panel.background = element_rect(fill = "#FF007F"),
+    plot.background = element_rect(fill = "#00FFFF"),
+    panel.grid.major = element_line(color = "#39FF14", size = 2),
+    axis.text.x = element_text(angle = 180, color = "purple", size = 12),
+    axis.text.y = element_text(angle = 90, color = "purple", size = 12),
+    plot.title = element_text(size = 18, face = "bold.italic", color = "yellow")
+  ) +
+  labs(
+    title = "fire rescues",
+    x = "cost",
+    y = "latitude"
+  )
+plot
+```
+
+I have to manually make a legend because {ggcats} and {ggdogs} don't have that capability built in, so I'm making a ggplot static legend with the cat/dog icons and a list of the corresponding rescued animals they're mapped to.
+```{r badplot legend}
+#| output: false
+legend_data <- icon_mapping %>%
+  distinct(animal_group, avatar_type, avatar_name) %>%
+  mutate(position = row_number()) #assigning a position to each animal based on row number to be able to plot by position to separate them vertically
+
+p_legend <- ggplot(legend_data) +
+  geom_cat( #have to do cat and dog layer separately, here printing cat faces
+    data = filter(legend_data, avatar_type == "cat"),
+    aes(x = 1, y = position, cat = avatar_name), size = 1.5
+  ) +
+  geom_dog(
+    data = filter(legend_data, avatar_type == "dog"),
+    aes(x = 1, y = position, dog = avatar_name), size = 1.5
+  ) +
+  geom_text( #adding text for corresponding animal they're mapped to
+    aes(x = 1.1, y = position, label = animal_group)
+  ) +
+  xlim(0.95, 1.15)+ #changing x limits to crop legend/plot
+  theme_void() #getting rid of all background plot info
+p_legend
+
+ggsave(here("Goodplot_Badplot", "Output", "dogcatlegend.png"))
+```
+
+Using {patchwork} to combine total rescues plot with my manually made legend:
+```{r combined static plots}
+#using patchwork to combine plots
+combined_plot <- plot + p_legend + plot_layout(widths = c(3, 1.75))
+combined_plot
+
+ggsave(here("Goodplot_Badplot", "Output", "badplot_rescues_static.png"))
+```
+
+Now I'm animating the rescue plot with {gganimate} so that it changes for each calendar year, and adding visual effects so it bounces around on transitions.
+```{r animated plot}
+animatedplot <- ggplot()+
+  geom_cat(data = cat_data,
+           aes(x = incident_notional_cost, y = latitude,
+               cat = as.character(avatar_name), size = longitude))+
+  geom_dog(data = dog_data,
+           aes(x = incident_notional_cost, y = latitude,
+               dog = as.character(avatar_name), size = longitude))+
+  theme( #making everything neon and ugly
+    panel.background = element_rect(fill = "#FF007F"),
+    plot.background = element_rect(fill = "#00FFFF"),
+    panel.grid.major = element_line(color = "#39FF14", size = 2),
+    axis.text.x = element_text(angle = 180, color = "purple", size = 12), #flipping text to be upside down
+    axis.text.y = element_text(angle = 90, color = "purple", size = 12),
+    plot.title = element_text(size = 18, face = "bold.italic", color = "yellow")
+  ) +
+  transition_states(
+    cal_year, #transitioning by year
+    transition_length = 2, #length of transition (2 seconds)
+    state_length = 1)+ #how long it stays in each transition
+  ease_aes('elastic-in-out')+ #makes elastic in-n-out motion on transitions
+  labs(
+    title = "fire rescues {closest_state}",
+    x = "cost",
+    y = "latitude"
+  )
+
+anim_save(here("Goodplot_Badplot", "Output", "badplot_animation.gif"), animation = animatedplot) #saving animation as gif
+
+animatedplot
+```
+```{r}
+#| echo: FALSE
+#| fig-height: 3.5
+#| fig-width: 5.5
+p_legend #printing icon legend in chunk just beneath animated plot
+```
+
+This plot is bad for many reasons:
+
+* The plotting icons (dogs and cats) are misleading because they're representing other types of animals that were rescued (for example, cat rescues are plotted with a husky dog icon, and dog rescues are plotted with a toast cat icon). (Goes against principles in Wilke mapping data onto visual features)
+* The legend icons are tiny and make it hard to determine which icon is being plotted to which animal
+* The plotted icons are overlapping so much that you can't visualize what's happening, especially at the lower cost values. (Goes against principles in mapping data onto visual features, with overplotting that conceals data distribution.)
+* The transitions are quite fast and make it hard to see what's going on, and the transition animation bouncing only makes it harder to visualize/interpret
+* Cost (on the x-axis) isn't defined / the units aren't specified, making it unclear what exactly is being plotted. Additionally, all the cost numbers are flipped upside down, making it even more annoying to read
+* The neon background colors add to the visual overstimulation (what Wilke would probably call an "ugly" plot, breaking principles of using color to encode meaningful variables)
+* Longitude and latitude aren't plotted against each other as would make sense; the size of the icon is the only place you can visualize longitude
+* Even if you had latitude and longitude on each axis, these would be plotted without context; these are somewhat meaningless without a reference frame. Most people probably wouldn't even be able to tell these data are from London! (Not following standards for mapping onto coordinate systems.)
+* No figure caption, descriptive title, or subtitle describing what's going on in this plot; it would be very hard to interpret this figure as a standalone without any additional text description
+
+### 2. Good Plot:
+
+*Cleaning data / data wrangling*
+```{r cleaning data goodplot}
+#cleaning data
+rescues_clean <- animal_rescues %>%
+  mutate(
+    longitude = as.numeric(longitude),
+    latitude = as.numeric(latitude),
+    incident_notional_cost = as.numeric(incident_notional_cost)) %>%
+  drop_na(latitude, longitude, incident_notional_cost, animal_group_parent) %>%
+  filter(!animal_group_parent %in% c( #filtering out some unknown categories with only a few instances
+    "Unknown - Domestic Animal Or Pet",
+    "Unknown - Animal rescue from water - Farm animal",
+    "Unknown - Animal rescue from below ground - Farm animal",
+    "cat")) %>%
+  filter(final_description != "Redacted") %>%
+  #arrange(desc(animal_group_parent %in% c("Cat", "Dog", "Bird"))) %>% #putting cats and dogs on the bottom for mapping
+  mutate(animal_color_group = as.character(
+      fct_lump_min(animal_group_parent, min = 5, other_level = "Other"))) %>% #adding new column for animal coloring where animals with less than 5 instances are labeled as "other"
+  mutate(animal_color_group = str_replace(animal_color_group, "Unknown - Wild Animal", " Unknown Wild Animal")) %>%
+  mutate(animal_color_group = str_replace(animal_color_group, "Unknown - Heavy Livestock Animal", "Unknown Heavy Livestock"))%>%
+  mutate(animal_color_group = fct_infreq(animal_color_group) %>% #re-ordering animal group by abundance
+           fct_relevel("Other", after = Inf)) #putting 'other' group at the very end
+```
+
+*Setting reference values for legend*
+```{r goodplot legend references}
+#defining reference cost values and labels for plotting the legend
+costs <- c(250, 500, 1000, 2000, 3000) #reference notional rescue cost values (in pounds)
+costlabels <- c("£250", "£500", "£1,000", "£2,000", "£3,000") #labels for reference mass values
+diameters <- 2 * ((costs)^1.1 * .004) #calculating diameters for legend based on scaling I'm using to plot
+named_breaks <- setNames(diameters, costlabels) #making a vector with calculated diameter values and labels of corresponding masses
+```
+
+*Setting up color palette*
+```{r goodplot colors}
+#setting up color palette
+
+colors11 <- c(
+  "#8D6E63", #cat
+  "#E6194B", #bird
+  "#29B6F6", #dog
+  "#FB8C00", #fox
+  "#3CB44B", #horse
+  "#FABED4", #deer
+  "#FFE119", #wild animal
+  "#76FF03", #heavy livestock
+  "#4363D8", #squirrel
+  "#911EB4", #cow
+  "#F032E6") #other
+
+pal <- colorFactor(
+  palette = colors11,
+  domain = rescues_clean$animal_color_group
+)
+```
+
+**Creating map of animal rescues attended by the London Fire Brigade:**
+
+* Using {leaflet} to create map, with "Stadia Alidade Smooth" basemap
+* Plotting animal rescues, sizing by cost of rescue and mapping the type of animal by color
+* Making interactive plot to click to see year, animal, notional cost of the rescue, and a brief rescue description
+* Adding layers for each animal to be able to toggle animal types on and off (e.g. to get rid of overwhelmingly abundant animals and/or investigate rarer animals)
+
+```{r goodplot map}
+#| label: fig-rescuemap
+#| fig-cap: "**London Animal Rescues Map.** This map shows animal rescues completed by the London Fire Brigade, from the years 2009-2021. *Click on individual points to view year of animal rescue, animal rescued, notional (estimated) cost of the rescue, and a description of the rescue. Use the layers feature in the top right to toggle on + off specific animal groups (listed in order of abundance).* Data Source: London.gov, by way of Data is Plural and Georgios Karamanis."
+
+
+#setting up map
+map <-  leaflet(width = "100%", height = "90vh") |> #making map nice and large
+  addProviderTiles(providers$Stadia.AlidadeSmooth) |>
+  setView(lng = -0.2, lat = 51.48, zoom = 10) 
+#mapping a layer (of circle markers) for each animal
+animal_list <- (unique(rescues_clean$animal_group_parent)) #creating list of all animals in this dataset
+for (animal in animal_list) {
+  sub_df <- rescues_clean |> filter(animal_group_parent == animal) #looping over each animal type so I can add them as separate layers to be able to toggle
+  map <- map |>
+  addCircleMarkers(
+    data = sub_df, #using the dataframe separated by each animal type to make each a layer
+    lng = ~longitude, lat = ~latitude,
+    color = ~pal(animal_color_group),
+    radius = ~(incident_notional_cost)^1.1 * .004, #scaled to visualize on map
+    fillOpacity = .45,
+    opacity = .6,
+    group = animal, #grouping by animal so each layer is one animal
+    popup = ~paste0("Year: ", cal_year,  #click a point to see the year of that animal rescue
+                   "<br>Animal: ", animal_group_parent, #animal 
+                   "<br>Cost: £", format(incident_notional_cost, big.mark = ","), #the notional (estimated) cost of the rescue, adding comma to values in the thousands
+                   "<br>Description: ", final_description)) #description of the rescue
+}
+
+#adding layer control feature
+map |>
+  addLayersControl( #adding a layer control so you can toggle on and off specific animals
+    overlayGroups = animal_list,
+    options = layersControlOptions(collapsed = TRUE)
+  ) |>
+  
+#adding legends
+  addLegend( #adding legend for animal colors 
+    pal = pal,
+    values = factor(rescues_clean$animal_color_group),
+    title = "Animal Type",
+    position = "topleft",
+    opacity = 0.7
+  ) |>
+  addLegendSize( #adding legend for sizes
+    values = diameters, #using calculated diameters from above, based on scaling factor
+    breaks = named_breaks, #breaks by selected mass values above, labeled with actual weight in kg
+    baseSize = mean(diameters),
+    position = "bottomleft",
+    title = "Rescue Cost",
+    shape = "circle",
+    color = "#333333",
+    fillColor = "#333333",
+    fillOpacity = 0.35)
+```
+
+This plot is good because:
+
+* Now these data are actually plotted onto a map, with basemap tiles allowing coordinates to be plotted in recognizeable areas. Interactive zoom feature allows viewers to zoom in and out of set area as much as they want for broader context or specific area investigations.
+* While there is a ton of data plotted here, there are multiple ways in which it's simplified to still be able to interpret and explore visually:
+  * Animals with less than 5 instances/rescues in the dataset are grouped into "Other" for coloring purposes on the map
+  * There is a layers toggling feature added so that the viewer can select and un-select certain animal groups to explore more niche animals, get rid of overly abundant animals, etc.
+  * Neutral, low-saturation basemap paired with distinct colors for animal categories shows clear contrast against the muted background.
+  * Leaflet interactive click popups display specific metadata only when prompted to keep the main display clean but contain more information on demand
+

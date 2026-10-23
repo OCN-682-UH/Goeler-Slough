@@ -1,0 +1,88 @@
+---
+title: "Week_9_HW"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+---
+
+***Homework assignment:*** Working with intertidal data. Your goal is to make a plot where at least one axis is a factor in a meaningful order.
+
+## Loading libraries
+```{r}
+library(tidyverse)
+library(here)
+library(forcats)
+library(janitor)
+```
+
+
+## Loading data
+```{r}
+dictionary <- read_csv(here("Week_9", "Data", "intertidal_data_dictionary.csv"))
+head(dictionary)
+
+latitudes <- read_csv(here("Week_9", "Data", "intertidaldata_latitude.csv"))
+head(latitudes)
+
+intertidaldata <- read_csv(here("Week_9", "Data", "intertidaldata.csv"))
+head(intertidaldata)
+glimpse(intertidaldata)
+```
+want to make line chart of different % cover categories (averaged across 3 quadrat heights), colored by category and in order of site by latitude on x axis 
+
+## Data analysis
+Data wrangling:
+```{r}
+joined <- left_join(intertidaldata, latitudes, by = "Site")
+
+summarized <- joined |>
+  clean_names() |> #using janitor to clean column names
+  pivot_longer( #pivoting to longer data to be able to plot as I want to
+    cols = c(bare_rock, algae, mussels, small_barnacles, large_barnacles, gooseneck_barnacles, anemone), #selecting % cover columns
+    names_to = "category",
+    values_to = "percent_cover"
+  ) |>
+  group_by(site, latitude, category) |>
+  summarize(mean_cover = mean(percent_cover, na.rm = TRUE), #calculating mean % cover across each site (averaged across quadrats)
+            .groups = "drop") |> #getting rid of grouping 
+  mutate(site = fct_reorder(site, latitude)) #changing factor to order sites by latitude
+```
+
+Now, plotting:
+```{r}
+#first, getting min and max latitudes to add to plot
+min_latitude <- round(min(summarized$latitude), 2)
+max_latitude <- round(max(summarized$latitude), 2)
+
+ggplot(summarized, aes(x = site, y = mean_cover, 
+                       color = fct_reorder(category, mean_cover, .desc=TRUE), group = category)) + #re-ordering legend to be in order of mean % cover
+  geom_line(linewidth = 1) +
+  annotate("text", x = 1, y = -Inf, label = paste0(min_latitude, "°N"), vjust = 7, fontface = "bold") + #pasting the minimum latitude on the left
+  annotate("text", x = 15, y = -Inf, label = paste0(max_latitude, "°N"), vjust = 7, fontface = "bold") + #pasting the maximum latitude on rightmost (15th site)
+  scale_color_discrete(
+    name = "Category",
+    labels = c( #renaming labels back to capitalized/normal
+      "algae" = "Alage",
+      "bare_rock" = "Bare Rock",
+      "small_barnacles" = "Small Barnacles",
+      "mussels" = "Mussels",
+      "gooseneck_barnacles" = "Gooseneck Barnacles",
+      "anemone" = "Anemone",
+      "large_barnacles" = "Large Barnacles"
+    ))+
+  labs(
+    x = "Site",
+    y = "Mean Percent Cover (%)",
+    title = "Mean Percent Cover across Sites (Ordered by Latitude)"
+  ) +
+  coord_cartesian(clip = "off") + #turning off clipping so that the latitudes added below y=0 are visible
+  theme_bw()+
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), #rotating labels 45 degrees so they aren't overlapping
+    plot.margin = margin(b = 10))  #adding extra space at the bottom for our labels
+```
+
+

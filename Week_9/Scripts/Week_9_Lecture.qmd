@@ -1,0 +1,158 @@
+---
+title: "Week_9_Lecture"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show code"
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(tidyverse)
+library(here)
+library(tidytuesdayR)
+library(forcats)
+```
+
+## Loading data
+```{r}
+income_mean <- tidytuesdayR::tt_load(2021, week = 7)$income_mean
+#also using starwars, built into dplyr
+```
+
+
+## Data analysis
+```{r}
+glimpse(starwars)
+head(starwars)
+```
+```{r}
+starwars |>
+  filter(!is.na(species)) |>   # remove NAs
+  count(species, sort = TRUE)
+```
+
+```{r}
+star_counts <- starwars |>
+  filter(!is.na(species)) |>
+  mutate(species = fct_lump(species, n = 3)) |>
+  count(species)
+
+star_counts
+```
+```{r}
+star_counts |>
+  ggplot(aes(x = species, y = n)) +
+  geom_col()
+#hard to interpret, would be better if in order
+```
+
+```{r}
+#sorting by values of x 
+star_counts |>
+  ggplot(aes(x = fct_reorder(species, n), y = n)) +
+  geom_col()
+```
+```{r}
+#now in descending order
+star_counts |>
+  ggplot(aes(x = fct_reorder(species, n, .desc = TRUE), y = n)) +
+  geom_col() +
+  labs(x = "Species")
+```
+
+Reording line plot legends:
+```{r}
+glimpse(income_mean)
+head(income_mean)
+```
+```{r}
+#summarize by year and quintile
+total_income <- income_mean |>
+  group_by(year, income_quintile) |>
+  summarise(income_dollars_sum = sum(income_dollars), .groups = "drop") |>
+  mutate(income_quintile = factor(income_quintile))
+```
+
+```{r}
+#basic line plot; legend in wrong order
+total_income |>
+  ggplot(aes(x = year, y = income_dollars_sum,
+             color = income_quintile)) +
+  geom_line()
+```
+
+```{r}
+#reorder by 2 variables
+total_income |>
+  ggplot(aes(x = year, y = income_dollars_sum,
+             color = fct_reorder2(income_quintile, year, income_dollars_sum))) +
+  geom_line() +
+  labs(color = "income quintile")
+```
+Setting levels manually:
+```{r}
+# Without levels — alphabetical by default
+x1 <- factor(c("Jan", "Mar", "Apr", "Dec"))
+x1
+```
+
+```{r}
+# With levels — your specified order
+x1 <- factor(c("Jan", "Mar", "Apr", "Dec"),
+             levels = c("Jan", "Mar", "Apr", "Dec"))
+x1
+```
+
+Subsetting factors: what happens to factor levels when you filter your data?
+```{r}
+#filter the starwars data to only species with more than 3 individuals
+starwars_clean <- starwars |>
+  filter(!is.na(species)) |>
+  count(species, sort = TRUE) |>
+  mutate(species = factor(species)) |>   # convert to factor
+  filter(n > 3)                          # keep only common species
+
+starwars_clean
+levels(starwars_clean$species)   # check the factor levels
+
+```
+droplevels() (base R) or fct_drop() (forcats) removes any levels that no longer appear in the data:
+```{r}
+starwars_clean <- starwars |>
+  filter(!is.na(species)) |>
+  count(species, sort = TRUE) |>
+  mutate(species = factor(species)) |>
+  filter(n > 3) |>
+  droplevels()      
+levels(starwars_clean$species)
+
+```
+
+Renaming levels:
+```{r}
+starwars_clean <- starwars |>
+  filter(!is.na(species)) |>
+  count(species, sort = TRUE) |>
+  mutate(species = factor(species)) |>
+  filter(n > 3) |>
+  droplevels() |>
+  mutate(species = fct_recode(species, "Humanoid" = "Human"))
+
+starwars_clean
+```
+
+Today’s Totally Awesome R Package — {gm}
+```{r}
+library(gm)
+
+m <-
+  Music() +                              # initialize a Music object
+  Meter(4, 4) +                          # 4/4 time signature
+  Line(c("C5", "D5", "E5", "F5"))        # four quarter notes
+
+#gm::show(m, to = c("score", "audio"))    # renders sheet music + plays audio
+```
+

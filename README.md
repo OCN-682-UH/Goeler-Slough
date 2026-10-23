@@ -30,6 +30,9 @@ Repository will be updated weekly with new homework & coursework.
 * [**Good Plot Bad Plot**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Goodplot_Badplot) 
   * Making worst and best plots using the same data: [quarto output](https://01a14d63-5487-da00-d55f-184f8405dc26.share.connect.posit.cloud/) 
   * I used the London Fire Brigade animal rescues dataset, taken from tidytuesday
+* [**Week 9**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_9)
+  * Factors [lecture](https://01a16b18-39fe-3874-55d1-07481b55276e.share.connect.posit.cloud/)
+  * Practicing factors [homework](https://01a16b16-c5e7-c4a3-f127-35cfaae824d0.share.connect.posit.cloud/)
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 
@@ -149,5 +152,23 @@ ___
         ├── Week_8_Class.qmd
         ├── Week_8_HW_files
         └── Week_8_HW.qmd
+└── Week_9
+    ├── Data
+    │   ├── intertidal_data_dictionary.csv
+    │   ├── intertidaldata_latitude.csv
+    │   └── intertidaldata.csv
+    ├── Output
+    │   ├── hw-figure-html
+    │   ├── lecture-figure-html
+    │   ├── Week_9_HW.html
+    │   └── Week_9_Lecture.html
+    └── Scripts
+        ├── rsconnect
+        ├── Week_9_HW_files
+        │   └── libs
+        ├── Week_9_HW.qmd
+        ├── Week_9_Lecture_files
+        │   └── libs
+        └── Week_9_Lecture.qmd
 ```
 

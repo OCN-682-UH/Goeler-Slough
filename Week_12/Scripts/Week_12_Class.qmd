@@ -1,0 +1,27 @@
+---
+title: "Week 12 Class"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show code"
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(shiny)
+```
+
+
+## Basic shiny app 
+```{r}
+ui <- fluidPage('Hello World') #fluid page = make webpage
+
+server <- function(input, output){}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+## 

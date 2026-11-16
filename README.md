@@ -8,29 +8,29 @@ Repository will be updated weekly with new homework & coursework.
 
 
 #### Table of Contents:  
-* [**Week 2**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_2) 
+* [**Week 2**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_02) 
   * First script, reading in 'weightdata.csv' with _here_ package
-* [**Week 3**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_3) 
+* [**Week 3**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_03) 
   * Intro to plotting & ggplot, using data on penguins in Palmer Archipelago
-* [**Week 4**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_4) 
+* [**Week 4**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_04) 
   * Data wrangling in dplyr and tidyr
-* [**Week 5**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_5) 
+* [**Week 5**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_05) 
   * Data wrangling: joins and dates in lubridate
   * Fun advanced plotting (patchwork, ggrepel, gganimate, plotly, magick)
-* [**Week 6**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_6) 
+* [**Week 6**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_06) 
   * Learning Quarto! [(Class Quarto practice)](https://01a0efa4-c52b-5da3-fffc-3a7358b1251a.share.connect.posit.cloud/)
   * Quarto [homework assignment](https://01a10f42-30ad-1820-a279-116196e5f62b.share.connect.posit.cloud/)
-* [**Week 7**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_7) 
+* [**Week 7**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_07) 
   * Mapping: part 1, [in class](https://01a11e02-1709-3b25-0318-da5a5307a518.share.connect.posit.cloud/)
   * Mapping: part 2, [lecture](https://01a11e04-7eb2-d8c4-91cb-f9303b221942.share.connect.posit.cloud/)
   * Week 7 mapping [homework](https://01a11e57-60a2-1d23-90e7-bcd5fa105af7.share.connect.posit.cloud/)
-* [**Week 8**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_8) 
+* [**Week 8**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_08) 
   * Functional programming [in class](https://01a14c46-0ec6-1ebe-bc8b-57dfb15a126f.share.connect.posit.cloud/)
   * Functions [homework](https://01a14c44-f3fa-8265-7bb8-aa4357853d08.share.connect.posit.cloud/)
 * [**Good Plot Bad Plot**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Goodplot_Badplot) 
   * Making worst and best plots using the same data: [quarto output](https://01a14d63-5487-da00-d55f-184f8405dc26.share.connect.posit.cloud/) 
   * I used the London Fire Brigade animal rescues dataset, taken from tidytuesday
-* [**Week 9**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_9)
+* [**Week 9**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_09)
   * Factors [lecture](https://01a16b18-39fe-3874-55d1-07481b55276e.share.connect.posit.cloud/)
   * Practicing factors [homework](https://01a16b16-c5e7-c4a3-f127-35cfaae824d0.share.connect.posit.cloud/)
 * [**Week 12**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_12)

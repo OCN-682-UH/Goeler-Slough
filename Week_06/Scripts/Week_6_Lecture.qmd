@@ -1,0 +1,96 @@
+---
+title: "Week 6 Lecture: Quarto pt. 2!"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+---
+
+### Loading my libraries:
+
+```{r}
+#| message: false
+
+library(palmerpenguins) #loading palmer penguins package with 'penguins' dataset
+library(tidyverse)
+library(kableExtra)
+```
+
+#### Loading data:
+Dataset already included in palmerpenguins package; has data on penguins collected from Palmer Station LTER.
+```{r}
+head(penguins) #looking at head of penguins data to remind myself of available variables
+```
+
+
+#### Data analysis:
+
+Making preliminary plot with penguins data:
+```{r}
+#| warning: false
+
+plot1 <- penguins |>
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_violin() +
+  geom_jitter(aes(color = island)) +
+  labs(title = "Penguin Bill Length across Species & Islands",
+       x = "Species", y = "Bill Length (mm)",
+       caption = "Source: Palmer Station LTER",
+       color = "Island")+
+  theme_bw()
+plot1
+```
+
+Now, practicing changing the size & alignment of the figure (half the width & centered)
+
+```{r}
+#| out-width: "50%" #making output 50% of the width size
+#| fig-align: "center" #putting plot into the center
+#| warning: false
+plot1
+```
+Now, adding labels:
+```{r}
+#| label: penguin #now this plot is labeled as "penguin" and can be called
+#| fig-cap: "This is my penguin figure"
+
+plot1
+```
+Using kableExtra to make a table:
+```{r}
+penguins |>
+  group_by(species) |>
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE)) |>
+  kbl() # make it a kable table
+```
+
+Adding style to the table:
+```{r}
+penguins |>
+  group_by(species) |>
+  summarise(billmean = mean(bill_length_mm, na.rm = TRUE)) |>
+  kbl()  |> # make it a kable table
+  kable_classic() |> # add a theme, kable classic
+  row_spec(2, bold = TRUE, color = "white", background = "turquoise") |> # highlight row 2 in turquoise
+  kable_styling(full_width = FALSE) # don't make the table so wide (making it narrower)
+```
+
+In-class activity: create code chunks with a ggplot figure and kbl() table, label and caption both, and then make a prose paragraph that references both.
+```{r}
+#| label: fig-penguin-plot
+#| fig-cap: "Bill length across 3 penguin species on 3 islands."
+plot1 #already made plot above (& assigned to name 'plot1'), using again here
+```
+```{r}
+#| label: tbl-penguin-averages
+#| tbl-cap: "Average penguin bill length by species and island."
+
+penguins |>
+  group_by(species, island) |>
+  summarise(mean_bill_length = mean(bill_depth_mm, na.rm = TRUE)) |>
+  kbl()
+```
+
+As shown in @fig-penguin-plot, bill lengths vary across species and island. Mean bill lengths across species and islands is summarized in @tbl-penguin-averages.

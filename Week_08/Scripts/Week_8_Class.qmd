@@ -1,0 +1,265 @@
+---
+title: "Week 8 Class: Functional Programming"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: false
+    code-summary: "Show code"
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(readr)
+library(tidyverse)
+library(here)
+```
+## Example: random df to see value of functions
+
+### Setting up dataframe with random numbers
+```{r}
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+head(df)
+```
+
+### Without a function: manual rescaling:
+```{r}
+df <- df |>
+  mutate(a = (a - min(a, na.rm = TRUE)) / (max(a, na.rm = TRUE) - min(a, na.rm = TRUE)))
+
+head(df)
+```
+Then would have to copy & paste for each column
+```{r}
+df <- df |>
+  mutate(
+    a = (a - min(a, na.rm = TRUE)) / (max(a, na.rm = TRUE) - min(a, na.rm = TRUE)),
+    b = (b - min(b, na.rm = TRUE)) / (max(b, na.rm = TRUE) - min(b, na.rm = TRUE)),
+    c = (c - min(c, na.rm = TRUE)) / (max(c, na.rm = TRUE) - min(c, na.rm = TRUE)),
+    d = (d - min(d, na.rm = TRUE)) / (max(d, na.rm = TRUE) - min(d, na.rm = TRUE))
+  )
+```
+
+### Now, create a reusable rescaling function:
+```{r}
+rescale01 <- function(x) {
+  value <- (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  return(value)
+}
+
+df |>
+  mutate(
+    a = rescale01(a),
+    b = rescale01(b),
+    c = rescale01(c),
+    d = rescale01(d)
+  )
+```
+
+### Even better: use mutate(across(everything()))
+```{r}
+df |>
+  mutate(across(everything(), rescale01))
+```
+
+## Example: Farenheit to Celsius
+
+### Step 1: the conversion formula
+```{r}
+temp_F <- 212
+temp_C <- (temp_F - 32) * 5/9
+temp_C
+```
+
+### Step 2: create the function structure
+```{r}
+f_to_celsius <- function() {
+  # code goes here
+}
+```
+
+### Step 3: add the formula
+```{r}
+f_to_celsius <- function() {
+  temp_C <- (temp_F - 32) * 5/9  #formula for converting f to c
+}
+```
+
+### Step 4: add the argument(s)
+```{r}
+f_to_celsius <- function(temp_F) { #can be anything but needs to stay consistent to inside the function
+  temp_C <- (temp_F - 32) * 5/9
+}
+```
+
+### Step 5: add the return statement
+```{r}
+f_to_celsius <- function(temp_F) { #can be anything but needs to stay consistent to inside the function
+  temp_C <- (temp_F - 32) * 5/9
+  return(temp_C)
+}
+```
+
+### Step 6: test
+```{r}
+f_to_celsius(32)
+f_to_celsius(212)
+```
+
+### Writing a function that converts Celsius to Kelvin:
+```{r}
+c_to_kelvin <- function(temp_C) { 
+  temp_kelvin <- (temp_C + 273.15)
+  return(temp_kelvin)
+}
+```
+Testing:
+```{r}
+c_to_kelvin(0)
+c_to_kelvin(100)
+```
+
+## Turning plots into functions:
+
+### Creating a reusable plot function with the penguin dataset
+```{r}
+library(palmerpenguins)
+library(PNWColors)
+```
+```{r}
+pal <- pnw_palette("Lake", 3, type = "discrete") #creating color palette
+
+ggplot(penguins, aes(x = body_mass_g, y = bill_length_mm, color = island)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_color_manual("Island", values = pal) +
+  theme_bw()
+```
+### Now, setting up the function:
+```{r}
+myplot <- function() {
+  pal <- pnw_palette("Lake", 3, type = "discrete")
+  
+  ggplot(penguins, aes(x = body_mass_g, y = bill_length_mm, color = island)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_color_manual("Island", values = pal) +
+    theme_bw()
+}
+```
+
+Making arguments broad so the function works with any data:
+```{r}
+myplot <- function(data, x, y) {
+  pal <- pnw_palette("Lake", 3, type = "discrete")
+  
+  ggplot(data, aes(x = x, y = y, color = island)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_color_manual("Island", values = pal) +
+    theme_bw()
+}
+```
+
+Testing it:
+```{r}
+#myplot(data = penguins, x = body_mass_g, y = bill_length_mm)
+```
+Error! body_mass_g exists within the penguin dataframe, but R can’t find it in the environment. We need the **curly-curly {{}}** operator, to pass column names as arguments.
+
+New function:
+```{r}
+myplot <- function(data, x, y) {
+  pal <- pnw_palette("Lake", 3, type = "discrete")
+  
+  ggplot(data, aes(x = {{x}}, y = {{y}}, color = island)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_color_manual("Island", values = pal) +
+    theme_bw()
+}
+```
+
+Testing again:
+```{r}
+myplot(data = penguins, x = body_mass_g, y = bill_length_mm)
+```
+
+Testing again with other variables:
+```{r}
+myplot(data = penguins, x = body_mass_g, y = flipper_length_mm)
+```
+### Can add default arguments, so users don't have to specify everything
+Making penguins default dataset:
+```{r}
+myplot <- function(data = penguins, x, y) {
+  pal <- pnw_palette("Lake", 3, type = "discrete")
+  
+  ggplot(data, aes(x = {{x}}, y = {{y}}, color = island)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_color_manual("Island", values = pal) +
+    theme_bw()
+}
+```
+
+Now you can just call column names:
+```{r}
+myplot(x = body_mass_g, y = flipper_length_mm)
+```
+### Layer onto the function
+You can add ggplot layers using + just like a regular plot:
+```{r}
+myplot(x = body_mass_g, y = flipper_length_mm) +
+  labs(x = "Body mass (g)", y = "Flipper length (mm)")
+```
+## Adding control flow with if-else:
+
+The if-else statement basic example:
+```{r}
+a <- 6
+b <- 5
+
+if (a > b) {
+  f <- 20
+} else {
+  f <- 10
+}
+
+f
+```
+
+### Using if-else to make function more flexible, toggling features on/off
+```{r}
+myplot <- function(data = penguins, x, y, lines = TRUE) {  #default: lines ARE plotted/included
+  pal <- pnw_palette("Lake", 3, type = "discrete")
+  
+  if (lines == TRUE) {
+    ggplot(data, aes(x = {{x}}, y = {{y}}, color = island)) +
+      geom_point() +
+      geom_smooth(method = "lm") +
+      scale_color_manual("Island", values = pal) +
+      theme_bw()
+  } else {
+    ggplot(data, aes(x = {{x}}, y = {{y}}, color = island)) +
+      geom_point() +
+      scale_color_manual("Island", values = pal) +
+      theme_bw()
+  }
+}
+```
+
+Test with lines (default):
+```{r}
+myplot(x = body_mass_g, y = flipper_length_mm)
+```
+Test without lines:
+```{r}
+myplot(x = body_mass_g, y = flipper_length_mm, lines = FALSE)
+```
+

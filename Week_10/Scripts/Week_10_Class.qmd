@@ -1,0 +1,288 @@
+---
+title: "Week 10 Class: Strings"
+author: Natalie Goeler-Slough
+format:
+  html:
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(here)
+library(tidyverse)
+library(tidytext)
+library(wordcloud)
+library(janeaustenr)
+```
+## Intro into {stringr}
+
+### What is a string?
+A string and a character are the same thing. You can tell something is a string by the presence of quotations.
+```{r}
+words <- "This is a string"
+words
+
+words_vector <- c("Apples", "Bananas", "Oranges")
+words_vector
+```
+
+
+### 1. Manipulation:
+
+Paste:
+```{r}
+paste("High temp", "Low pH") #pasting words together
+paste("High temp", "Low pH", sep = "-") #adding dash between words
+paste0("High temp", "Low pH") #removing the space in between words
+```
+
+Working with vectors:
+```{r}
+shapes <- c("Square", "Circle", "Triangle")
+paste("My favorite shape is a", shapes)
+```
+```{r}
+two_cities <- c("best", "worst")
+paste("It was the", two_cities, "of times.")
+```
+
+Individual characters:
+```{r}
+shapes
+str_length(shapes) #how long a string is; how many letters are in each word
+```
+```{r}
+seq_data <- c("ATCCCGTC")
+str_sub(seq_data, start = 2, end = 4) #extract from the 2nd amino acid to the 4th AA
+```
+
+Modifying strings:
+```{r}
+str_sub(seq_data, start = 3, end = 3) <- "A" #add an A in the 3rd position
+seq_data
+```
+```{r}
+str_dup(seq_data, times = c(2, 3)) #times = the number of times to duplicate each string
+```
+
+
+### 2. Whitespace
+
+Have some words with extra white spaces:
+```{r}
+badtreatments <- c("High", " High", "High ", "Low", "Low")
+badtreatments
+```
+Trimming white space:
+```{r}
+str_trim(badtreatments) #this removes white space from both sides
+```
+```{r}
+str_trim(badtreatments, side = "left") #this removes from only the left side
+```
+
+Adding white space:
+```{r}
+str_pad(badtreatments, 5, side = "right") #add a white space to the right side after the 5th character (each will be 5 characters for the final)
+```
+Adding a character instead of white space:
+```{r}
+str_pad(badtreatments, 5, side = "right", pad = "1") # add a 1 to the right side after the 5th character
+```
+
+
+### 3. Locale sensitive:
+
+Make everything upper case:
+```{r}
+x <- "I love R!"
+str_to_upper(x)
+```
+Lower case:
+```{r}
+str_to_lower(x)
+```
+Title case:
+```{r}
+str_to_title(x)
+```
+
+### 4. Pattern matching:
+
+View a specific pattern in a vector of strings:
+```{r}
+data <- c("AAA", "TATA", "CTAG", "GCTT")
+str_view(data, pattern = "A")
+```
+
+Detect a specific pattern:
+```{r}
+str_detect(data, pattern = "A")
+str_detect(data, pattern = "AT")
+```
+
+Locate a pattern:
+```{r}
+str_locate(data, pattern = "AT")
+```
+## {regex}: Regular Expressions
+
+### Metacharacters:
+
+```{r}
+vals <- c("a.b", "b.c", "c.d")
+```
+
+replace all the “.” with a space
+```{r}
+# string, pattern, replace
+str_replace(vals, "\\.", " ")
+```
+
+Default only replaces first:
+```{r}
+vals <- c("a.b.c", "b.c.d", "c.d.e")
+# string, pattern, replace
+str_replace(vals, "\\.", " ")
+```
+Replacing all:
+```{r}
+# string, pattern, replace
+str_replace_all(vals, "\\.", " ")
+```
+
+### Sequences:
+
+Subsetting a vector to keep only string with digits:
+```{r}
+val2 <- c("test 123", "test 456", "test")
+
+str_subset(val2, "\\d") #finding strings with difits
+```
+
+### Character class:
+
+Count the number of lowercase vowels in each string:
+```{r}
+str_count(val2, "[aeiou]")
+```
+
+Count any digit:
+```{r}
+str_count(val2, "[0-9]")
+```
+
+
+### Quantifiers:
+
+Example: find the phone numbers:
+```{r}
+strings <- c("550-153-7578",
+             "banana",
+             "435.114.7586",
+             "home: 672-442-6739")
+```
+
+Create a regex that finds all strings that contain a phone number
+```{r}
+phone <- "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+#first # between 2-9, the next two are between 0-9 ({2} means 2 previous), then a dash or a dot, then 3 between 0-9, another dash and dot, and then 4 numbers between 0-9
+
+str_detect(strings, phone)
+```
+```{r}
+# subset only the strings with phone numbers
+test <- str_subset(strings, phone)
+test
+```
+
+Replace all the “.” with “-” and extract only the numbers (leaving the letters behind). Remove any extra white space.
+```{r}
+test |>
+  str_replace_all("\\.", "-") |>
+  str_replace_all("[a-zA-Z]", "") |>
+  str_replace_all("\\:", "") |>
+  str_replace_all(" ", "")
+```
+
+
+## {tidytext}
+
+Using Jane Austen's books:
+```{r}
+head(austen_books())
+tail(austen_books())
+glimpse(austen_books())
+```
+Clean it up and add a column for line and chapter:
+```{r}
+original_books <- austen_books() |> # get all of Jane Austen's books
+  group_by(book) |>
+  mutate(line = row_number(), # find every line
+         chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]", # count the chapters (starts with (^) the word chapter followed by any digit or a roman numeral); cumulative sum so they're in order (assumes ch 2 after ch 1 etc)
+                                                 ignore_case = TRUE)))) |> # ignore lower or uppercase
+  ungroup() # ungroup it so we have a dataframe again
+
+# don't try to view the entire thing... it's >73000 lines...
+head(original_books)
+```
+
+Text mining: make it only one word per row so it's tidy:
+```{r}
+tidy_books <- original_books |>
+  unnest_tokens(output = word, input = text) # add a column named word, with the input as the text column
+
+head(tidy_books)
+glimpse(tidy_books)
+```
+Stopwords: words that are common and don’t really have important meaning
+```{r}
+# see an example of all the stopwords
+head(get_stopwords())
+```
+Removing all stopwords:
+```{r}
+cleaned_books <- tidy_books |>
+  anti_join(get_stopwords()) # dataframe without the stopwords
+
+head(cleaned_books)
+```
+Counting the most common words (excluding stopwords) across all her books:
+```{r}
+cleaned_books |>
+  count(word, sort = TRUE)
+```
+
+Sentiment analysis: (positive vs. negative words)
+```{r}
+sent_word_counts <- tidy_books |>
+  inner_join(get_sentiments()) |> # only keep pos or negative words
+  count(word, sentiment, sort = TRUE) # count them
+
+head(sent_word_counts)
+```
+Visualize positive and negative words:
+```{r}
+sent_word_counts |>
+  filter(n > 150) |> # take only if there are over 150 instances of it
+  mutate(n = ifelse(sentiment == "negative", -n, n)) |> # add a column where if the word is negative make the count negative
+  mutate(word = reorder(word, n)) |> # sort it so it goes from largest to smallest
+  ggplot(aes(x = n, y = word, fill = sentiment)) +
+  geom_col() +
+  labs(y = "Contribution to sentiment")
+```
+
+Making a wordcloud:
+```{r}
+words <- cleaned_books |>
+  count(word) |> # count all the words
+  arrange(desc(n)) |> # sort the words
+  slice(1:100) # take the top 100
+
+wordcloud(words = words$word, freq = words$n, colors = brewer.pal(8, "Dark2"))
+#freq = words$n makes words larger based on how many times they appeared
+```
+
+
+## Awesome package of the day: {ggirl}
+[link here](https://jnolis.com/blog/introducing_ggirl/)

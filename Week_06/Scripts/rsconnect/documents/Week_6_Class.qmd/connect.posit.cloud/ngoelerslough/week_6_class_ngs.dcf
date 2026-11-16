@@ -1,0 +1,12 @@
+name: week_6_class_ngs
+title: Week_6_Class_NGS
+username: ngoelerslough
+account: ngoelerslough
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 01a0efa4-c52b-5da3-fffc-3a7358b1251a
+bundleId:
+url: https://connect.posit.cloud/ngoelerslough/content/01a0efa4-c52b-5da3-fffc-3a7358b1251a
+version: 1
+asMultiple: FALSE
+asStatic: TRUE

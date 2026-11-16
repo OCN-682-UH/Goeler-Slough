@@ -1,0 +1,10 @@
+---
+title: "Week_10_HW"
+author: Natalie Goeler-Slough
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+---
+

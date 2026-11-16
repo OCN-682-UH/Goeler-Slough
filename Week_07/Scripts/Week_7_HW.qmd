@@ -1,0 +1,77 @@
+---
+title: "Week 7 Homework: Mapping"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+    theme: lux
+---
+
+## Loading libraries
+```{r}
+library(readr)
+library(leaflet)
+library(tidyverse)
+library(here)
+library(sf)
+library(maptiles)
+library(tidyterra)
+library(ggspatial)
+library(leaflegend)
+```
+
+
+## Loading data
+Using dataset on meteorites! Where they fell & when they fell. Comes from the the Meteoritical Society by way of NASA.
+```{r}
+meteorites <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2019/2019-06-11/meteorites.csv")
+
+glimpse(meteorites)
+```
+
+## Data analysis:
+
+### Making map of meteorites!
+
+First, I'm defining reference mass values and setting up calculated values for my legend.
+```{r}
+#first, need to define reference mass values and labels for plotting the legend
+legendmasses <- c(1000, 10000, 100000, 1000000, 10000000) #reference mass values (in grams, matching meteorite dataframe)
+masslabels <- c("1 kg", "10 kg", "100 kg", "1,000 kg", "10,000 kg") #labels for reference mass values
+diameters <- 2 * (sqrt(legendmasses) * 0.005) #calculating diameters for legend based on scaling factor I'm using to plot
+named_breaks <- setNames(diameters, masslabels) #making a vector with calculated diameter values and labels of corresponding masses
+```
+
+Now, I'm plotting! Mapping meteorite sightings across the world, sizing points based on the mass of the meteorite. Also making the map interactive such that you can click on a point to see the meteor name and year that the meteor was found.
+
+### Global Meteorite Mass Distribution:
+```{r}
+#| label: fig-meteormap
+#| fig-cap: "Global Meteorite Mass Distribution. *Click on individual points to view meteorite names and discovery years.* Source: NASA."
+leaflet(meteorites) |>
+  addProviderTiles(providers$NASAGIBS.ViirsEarthAtNight2012) |> #using a fun earth at night map base :) 
+  setView(lng = 45.0, lat = 30.0, zoom = 2.5) |> #setting initial zoom to be around Europe/Asia/Africa
+  addCircleMarkers(
+    lng = ~long, lat = ~lat,
+    radius = ~sqrt(mass) * 0.005, #scaling circles to be the mass of the meteor (sqrt and making smaller to scale onto map)
+    color = "red",
+    fillOpacity = 0.8,
+    popup = ~paste("Name:", name,  # click a point to see the name of the meteor
+                   "<br>Year:", year)) |>  #also displays the year the meteor was found
+  addLegendSize( #adding legend for sizes
+    values = diameters, #using calculated diameters from above, based on scaling factor
+    breaks = named_breaks, #breaks by selected mass values above, labeled with actual weight in kg
+    baseSize = mean(diameters),
+    position = "bottomleft",
+    title = "Meteorite Mass",
+    shape = "circle",
+    color = "red",
+    fillColor = "red",
+    fillOpacity = 0.8
+  ) 
+```
+
+
+

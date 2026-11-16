@@ -1,0 +1,12 @@
+name: week_7_class
+title: Week_7_Class
+username: ngoelerslough
+account: ngoelerslough
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 01a11e02-1709-3b25-0318-da5a5307a518
+bundleId:
+url: https://connect.posit.cloud/ngoelerslough/content/01a11e02-1709-3b25-0318-da5a5307a518
+version: 1
+asMultiple: FALSE
+asStatic: TRUE

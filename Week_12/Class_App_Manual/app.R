@@ -8,10 +8,6 @@ library(shiny)
 library(tidyverse)
 library(here)
 
-## loading data
-stars <- read_csv(here("Week_12","Class_App_Manual", "data", "stars.csv"))
-glimpse(stars)
-
 # setting up user interface (building around inputs and outputs)
 ui <- fluidPage( #fluid page = make webpage
   sliderInput(inputId = "num", # ID name for the input; keep simple -- will use a lot

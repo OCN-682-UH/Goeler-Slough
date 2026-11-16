@@ -11,7 +11,7 @@ library(tidyverse)
 library(here)
 
 ## loading data
-stars <- read_csv(here("Week_12","Class_Stars_App", "data", "stars.csv"))
+stars <- read_csv("data/stars.csv")
 glimpse(stars)
 
 ## setting up UI

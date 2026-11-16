@@ -33,8 +33,10 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 9**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_09)
   * Factors [lecture](https://01a16b18-39fe-3874-55d1-07481b55276e.share.connect.posit.cloud/)
   * Practicing factors [homework](https://01a16b16-c5e7-c4a3-f127-35cfaae824d0.share.connect.posit.cloud/)
+* [**Week 10**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_10)
+  * Strings! (stringr, regex, tidytext) [class quarto](https://01a1e69b-8317-914e-6970-ffc0e8484c43.share.connect.posit.cloud/)
 * [**Week 12**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_12)
-  * Class manual app (histogram): [published link](https://01a1e68a-874c-ed00-c49d-bb5cad9b85d1.share.connect.posit.cloud/)
+  * Shiny apps! Class manual app (histogram): [published link](https://01a1e68a-874c-ed00-c49d-bb5cad9b85d1.share.connect.posit.cloud/)
   * Class app using sea stars dataset: [published link](https://01a1e68b-6e45-2154-020d-7b6eaa1e1833.share.connect.posit.cloud/)
   * Homework making a shiny app: [published link]()
 

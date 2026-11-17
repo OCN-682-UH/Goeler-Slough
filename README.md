@@ -75,19 +75,19 @@ ___
 │       └── rsconnect
 ├── README.html
 ├── README.md
-├── Week_2
+├── Week_02
 │   ├── Data
 │   │   └── weightdata.csv
 │   ├── Output
 │   └── Scripts
 │       └── Week_2_Script.R
-└── Week_3
+└── Week_03
     ├── Output
     │   ├── penguin_plot_hw.png
     │   └── beyonce_penguin.png
     └── Scripts
         └── Week_3_Script.R
-└── Week_4
+└── Week_04
     ├── Data
     │   ├── chem_data_dictionary.csv
     │   └── chemicaldata_maunalua.csv
@@ -101,7 +101,7 @@ ___
         ├── Week_4_Lecture.R
         ├── Week_4a_Homework.R
         └── Week_4b_Homework.R
-└── Week_5
+└── Week_05
     ├── Data
     │   ├── CondData.csv
     │   ├── DepthData.csv
@@ -116,7 +116,7 @@ ___
         ├── Week_5_Class.R
         ├── Week_5_HW.R
         └── Week_5_Lecture.R
-└── Week_6
+└── Week_06
     ├── Output
         ├── Week_6_Class.html
         ├── Week_6_HW.html
@@ -126,7 +126,7 @@ ___
         ├── Week_6_HW.qmd
         ├── Week_6_Lecture.qmd
         └── rsconnect
-└── Week_7
+└── Week_07
     ├── Data
         ├── CAPopdata.csv
         ├── chemicaldata_maunalua.csv
@@ -143,7 +143,7 @@ ___
         ├── Week_7_Class.qmd
         ├── Week_7_HW.qmd
         └── Week_7_Lecture.qmd
-└── Week_8
+└── Week_08
     ├── Data
     │   ├── annotations.csv
     │   └── CoralNet_Labelset.csv
@@ -158,7 +158,7 @@ ___
         ├── Week_8_Class.qmd
         ├── Week_8_HW_files
         └── Week_8_HW.qmd
-└── Week_9
+└── Week_09
     ├── Data
     │   ├── intertidal_data_dictionary.csv
     │   ├── intertidaldata_latitude.csv
@@ -176,5 +176,28 @@ ___
         ├── Week_9_Lecture_files
         │   └── libs
         └── Week_9_Lecture.qmd
+├── Week_10
+│   ├── Output
+│   │   └── Week_10_Class.html
+│   └── Scripts
+│       ├── rsconnect
+│       ├── Week_10_Class_files
+│       ├── Week_10_Class.qmd
+│       └── Week_10_HW.qmd
+└── Week_12
+    ├── Class_App_Manual
+    │   ├── app.R
+    │   └── rsconnect
+    ├── Class_Stars_App
+    │   ├── app.R
+    │   ├── data
+    │   │   └── stars.csv
+    │   └── rsconnect
+    └── Homework_App
+        ├── app.R
+        ├── data
+        │   ├── annotations.csv
+        │   └── CoralNet_Labelset.csv
+        └── rsconnect
 ```
 

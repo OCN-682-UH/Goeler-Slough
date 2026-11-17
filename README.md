@@ -34,11 +34,11 @@ Repository will be updated weekly with new homework & coursework.
   * Factors [lecture](https://01a16b18-39fe-3874-55d1-07481b55276e.share.connect.posit.cloud/)
   * Practicing factors [homework](https://01a16b16-c5e7-c4a3-f127-35cfaae824d0.share.connect.posit.cloud/)
 * [**Week 10**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_10)
-  * Strings! (stringr, regex, tidytext) [class quarto](https://01a1e69b-8317-914e-6970-ffc0e8484c43.share.connect.posit.cloud/)
+  * Strings! (*stringr, regex, tidytext*) [class quarto](https://01a1e69b-8317-914e-6970-ffc0e8484c43.share.connect.posit.cloud/)
 * [**Week 12**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_12)
   * Shiny apps! Class manual app (histogram): [published link](https://01a1e68a-874c-ed00-c49d-bb5cad9b85d1.share.connect.posit.cloud/)
   * Class app using sea stars dataset: [published link](https://01a1e68b-6e45-2154-020d-7b6eaa1e1833.share.connect.posit.cloud/)
-  * Homework making a shiny app: [published link]()
+  * Homework making a shiny app to investigate benthic composition: [published link](https://01a1e75e-2470-f399-7ca5-38bc60fd7721.share.connect.posit.cloud/)
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 

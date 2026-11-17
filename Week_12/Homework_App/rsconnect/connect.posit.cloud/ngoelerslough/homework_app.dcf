@@ -1,0 +1,12 @@
+name: homework_app
+title: Homework_App
+username: ngoelerslough
+account: ngoelerslough
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 01a1e75e-2470-f399-7ca5-38bc60fd7721
+bundleId:
+url: https://connect.posit.cloud/ngoelerslough/content/01a1e75e-2470-f399-7ca5-38bc60fd7721
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

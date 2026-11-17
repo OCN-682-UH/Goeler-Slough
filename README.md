@@ -176,14 +176,14 @@ ___
         ├── Week_9_Lecture_files
         │   └── libs
         └── Week_9_Lecture.qmd
-├── Week_10
-│   ├── Output
-│   │   └── Week_10_Class.html
-│   └── Scripts
-│       ├── rsconnect
-│       ├── Week_10_Class_files
-│       ├── Week_10_Class.qmd
-│       └── Week_10_HW.qmd
+└── Week_10
+    ├── Output
+    │   └── Week_10_Class.html
+    └── Scripts
+        ├── rsconnect
+        ├── Week_10_Class_files
+        ├── Week_10_Class.qmd
+        └── Week_10_HW.qmd
 └── Week_12
     ├── Class_App_Manual
     │   ├── app.R

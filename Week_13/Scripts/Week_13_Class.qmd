@@ -1,0 +1,280 @@
+---
+title: "Week 13 Class: Iterative Coding"
+author: Natalie Goeler-Slough
+format:
+  html:
+    warning: false
+---
+
+## Loading libraries
+```{r}
+library(tidyverse)
+library(here)
+```
+
+## for loops
+
+### Simple for loop:
+Simple code for one year:
+```{r}
+print(paste("The year is", 2000))
+```
+Put it in a for loop:
+```{r}
+years <- c(2015:2021)
+
+for (i in years) {
+  print(paste("The year is", i))
+}
+```
+To save to a new vector, need to pre-allocate space & tell R where it's saved.
+This saves time (vs. growing through each iteration) so the loop just fills in the spots of pre-allocated space.
+
+Making an empty dataframe:
+```{r}
+year_data <- tibble(year = rep(NA, length(years)),
+                    year_name = rep(NA, length(years)))
+
+year_data
+```
+
+Adding the for loop:
+*(to test for loop, can assign i to 1 and test to see what the output is in the for loop)*
+```{r}
+for (i in seq_along(years)) { #seq_along means move along sequence from first to next etc
+  year_data$year_name[i] <- paste("The year is", years[i]) #need bracket to say in the i'th row put in the i'th year
+}
+
+year_data
+```
+Adding into year column too:
+```{r}
+for (i in seq_along(years)) {
+  year_data$year_name[i] <- paste("The year is", years[i])
+  year_data$year[i] <- years[i]
+}
+
+year_data
+```
+
+### Using for loops to read in multiple csv files
+
+Reading in one csv:
+```{r}
+testdata <- read_csv(here("Week_13", "Data", "cond_data", "011521_CT316_1pcal.csv"))
+
+glimpse(testdata)
+```
+List all files in a directory:
+```{r}
+# Point to the folder on the computer (conductivity path)
+CondPath <- here("Week_13", "Data", "cond_data")
+
+# dir goes into directory to find matching files:
+# List all files in that path matching a pattern (here, anything with .csv)
+# You can use regex to be more specific about filenames
+files <- dir(path = CondPath, pattern = ".csv")
+
+files
+```
+
+Pre-allocate space for the loop:
+```{r}
+# One row for each file and 3 columns
+cond_data <- tibble(filename = rep(NA, length(files)),
+                    mean_temp = rep(NA, length(files)),
+                    mean_sal = rep(NA, length(files)))
+
+cond_data
+```
+
+Write the basic code to read in file(s) first:
+```{r}
+# Test by reading in the first file
+raw_data <- read_csv(paste0(CondPath, "/", files[1]))
+head(raw_data)
+```
+Calculating mean temperature:
+```{r}
+mean_temp <- mean(raw_data$Temperature, na.rm = TRUE)
+mean_temp
+```
+
+Turn it into a for loop:
+```{r}
+for (i in seq_along(files)) { # loop over each file (1, 2, 3)
+  raw_data <- read_csv(paste0(CondPath, "/", files[i]))
+  #glimpse(raw_data)
+  cond_data$filename[i] <- files[i]
+  cond_data$mean_temp[i] <- mean(raw_data$Temperature, na.rm = TRUE)
+  cond_data$mean_sal[i] <- mean(raw_data$Salinity, na.rm = TRUE)
+}
+cond_data
+```
+
+## purrr
+
+### Example: calculate the mean of a set of random numbers, 10 times
+
+Creating a vector 1 to 10:
+```{r}
+1:10
+```
+
+For each value in 1:10, make a vector of 15 random numbers from a normal distribution:
+```{r}
+set.seed(3817) # makes the random numbers reproducible
+1:10 |> # the vector to iterate over
+  map(rnorm, n = 15) # 15 random numbers from a normal distribution, in a list
+```
+
+Calculate the mean of each list element:
+
+Option 1: use a canned function that already exists
+```{r}
+set.seed(3817)
+1:10 |>
+  map(rnorm, n = 15) |>
+  map_dbl(mean) # the result is now a vector of type "double" (double = numeric; numeric vector)
+```
+
+Option 2: make your own function
+```{r}
+set.seed(3817)
+1:10 |>
+  map(function(x) rnorm(15, x)) |> # make your own function
+  map_dbl(mean)
+```
+
+Option 3: use a formula
+```{r}
+set.seed(3817)
+1:10 |>
+  map(~ rnorm(15, .x)) |> # changes the arguments inside the function
+  map_dbl(mean)
+```
+
+
+### Bring in files using purrr instead of for loop
+
+Find the files:
+```{r}
+CondPath <- here("Week_13", "data", "cond_data")
+files <- dir(path = CondPath, pattern = ".csv")
+
+files
+```
+
+Get the full file names in one less step:
+```{r}
+files <- dir(path = CondPath, pattern = ".csv", full.names = TRUE) # saves the entire path
+files
+```
+Read in the files using map(), then stack the list of dataframes into one with list_rbind(), keeping the filename as a column
+```{r}
+data <- files |>
+  set_names() |> # names each list element with its file name
+  map(read_csv) |> # a list of 3 dataframes
+  list_rbind(names_to = "filename") # stack them; list names go in a "filename" column
+
+data
+```
+Calculating means:
+```{r}
+data <- files |>
+  set_names() |>
+  map(read_csv) |>
+  list_rbind(names_to = "filename") |>
+  group_by(filename) |>
+  summarise(mean_temp = mean(Temperature, na.rm = TRUE),
+            mean_sal = mean(Salinity, na.rm = TRUE))
+
+data
+```
+
+### Shortcut: readr can read multiple files at once
+```{r}
+data <- read_csv(files, id = "filename") |> # id argument adds a column with the file path
+  group_by(filename) |>
+  summarise(mean_temp = mean(Temperature, na.rm = TRUE),
+            mean_sal = mean(Salinity, na.rm = TRUE))
+data
+```
+
+### Other uses: a plot for every file (purrr)
+```{r}
+file_names <- dir(path = CondPath, pattern = ".csv") # just the file names
+
+save_temp_plot <- function(file_name) {
+  site_name <- str_remove(file_name, "\\.csv")
+
+  p <- read_csv(paste0(CondPath, "/", file_name)) |>
+    ggplot(aes(x = date, y = Temperature)) +
+    geom_line() +
+    labs(title = site_name, x = "Date", y = "Temperature (°C)")
+
+  ggsave(here("Week_13", "Output", paste0(site_name, "_temp.png")),
+         plot = p, width = 6, height = 4)
+}
+
+walk(file_names, save_temp_plot) #side effect (saving a file, output) rather than a returned value, use walk() instead of map()
+```
+
+### Other uses: a plot for every file (for loop)
+```{r}
+file_names <- dir(path = CondPath, pattern = ".csv") # just the file names
+
+for (i in seq_along(file_names)) {
+
+  raw_data <- read_csv(paste0(CondPath, "/", file_names[i]))
+
+  site_name <- str_remove(file_names[i], "\\.csv") # drop ".csv" for the title
+
+  p <- ggplot(raw_data, aes(x = date, y = Temperature)) +
+    geom_line() +
+    labs(title = site_name, x = "Date", y = "Temperature (°C)")
+
+  ggsave(here("Week_13", "Output", paste0(site_name, "_temp.png")),
+         plot = p, width = 6, height = 4)
+}
+```
+Check the output folder:
+```{r}
+dir(here("Week_13", "Output"), pattern = "_temp.png")
+```
+
+
+## Totally awesome package: gganatogram
+```{r}
+library(gganatogram)
+gganatogram(data = hgFemale_key,
+            organism = "human", sex = "female",
+            fill = "colour", fillOutline = "#a6bddb") +
+  theme_void() +
+  coord_fixed()
+```
+```{r}
+hgMale_key |>
+  filter(type %in% "nervous_system") |>
+  gganatogram(organism = "human", sex = "male",
+              fill = "colour", outline = FALSE) +
+  theme_void() +
+  coord_fixed()
+```
+```{r}
+gganatogram(data = mmFemale_key,
+            organism = "mouse", sex = "female",
+            fillOutline = "#a6bddb", fill = "colour") +
+  theme_void() +
+  coord_fixed()
+```
+```{r}
+gganatogram(data = cell_key$cell,
+            organism = "cell",
+            fillOutline = "#a6bddb", fill = "colour") +
+  theme_void() +
+  coord_fixed()
+```
+
+
+

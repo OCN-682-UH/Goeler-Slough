@@ -1,0 +1,29 @@
+---
+title: "Week 13 HW: Iterative Programming"
+author: "Natalie Goeler-Slough"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show code"
+    warning: false
+---
+
+**Assignment:**  
+You have a set of 4 .csv files in data/homework. Each file is a timeseries of temperature and light data collected in tide pools in Oregon by Jenn Fields. Bring in all 4 files and calculate the mean and standard deviation of both temperature (Temp.C) and light (Intensity.lux) for each tide pool.
+
+* 4 Points for the map
+* 4 points for the for loop
+* 2 points for proper scripting and file structure of your quarto file
+
+## Loading libraries
+```{r}
+library(tidyverse)
+library(here)
+```
+
+
+## Loading data 
+```{r}
+
+```
+

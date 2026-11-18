@@ -202,5 +202,29 @@ ___
         │   ├── annotations.csv
         │   └── CoralNet_Labelset.csv
         └── rsconnect
+└── Week_13
+    ├── Data
+    │   ├── cond_data
+    │   │   ├── 011521_CT316_1pcal.csv
+    │   │   ├── 011621_CT316_1pcal.csv
+    │   │   └── 011721_CT354_1pcal.csv
+    │   └── homework
+    │       ├── TP1.csv
+    │       ├── TP2.csv
+    │       ├── TP3.csv
+    │       └── TP4.csv
+    ├── Output
+    │   ├── 011521_CT316_1pcal_temp.png
+    │   ├── 011621_CT316_1pcal_temp.png
+    │   ├── 011721_CT354_1pcal_temp.png
+    │   ├── class-figures-html
+    │   ├── Week_13_Class.html
+    │   └── Week_13_HW.html
+    └── Scripts
+        ├── rsconnect
+        ├── Week_13_Class_files
+        ├── Week_13_Class.qmd
+        ├── Week_13_HW_files
+        └── Week_13_HW.qmd
 ```
 

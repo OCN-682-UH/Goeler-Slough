@@ -38,9 +38,10 @@ Repository will be updated weekly with new homework & coursework.
 * [**Week 12**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_12)
   * Shiny apps! Class manual app practice (histogram): [link](https://01a1e68a-874c-ed00-c49d-bb5cad9b85d1.share.connect.posit.cloud/)
   * Class app example using sea stars dataset: [link](https://01a1e68b-6e45-2154-020d-7b6eaa1e1833.share.connect.posit.cloud/)
-  * Homework -- making a shiny app to investigate benthic composition: [link](https://01a1e75e-2470-f399-7ca5-38bc60fd7721.share.connect.posit.cloud/)
+  * Homework - making a shiny app to investigate benthic composition: [link](https://01a1e75e-2470-f399-7ca5-38bc60fd7721.share.connect.posit.cloud/)
 * [**Week 13**](https://github.com/OCN-682-UH/Goeler-Slough/tree/main/Week_13)
   * Iterative coding (for loops, purrr). [Class link](https://01a1ebff-2c18-d2d6-c5a3-eb85aab29be2.share.connect.posit.cloud/)
+  * Homework - using iterative coding to summarize temp/light from 4 csv files: [link](https://01a1eca1-7bcb-dc5c-9a6d-ab8fe6869acc.share.connect.posit.cloud/) 
 
 ##### About me:
 My name is Natalie Goeler-Slough, and I'm a second year Marine Biology PhD student in the 

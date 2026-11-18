@@ -22,8 +22,87 @@ library(here)
 ```
 
 
-## Loading data 
-```{r}
+## Loading data & calculating summary statistics
 
+Getting path names to homework csv files:
+```{r}
+HWpath <- here("Week_13", "Data", "homework")
+files <- dir(path = HWpath, pattern = ".csv", full.names = TRUE) # saves the entire path
+```
+
+Reading in one file to glimpse and see file structure:
+```{r}
+#| output: FALSE
+testdata <- read_csv(here("Week_13", "Data", "homework", "TP1.csv"))
+glimpse(testdata)
+head(testdata)
+```
+
+
+Using readr to read in csv files, using tidyverse to summarize mean and standard deviation of temperature and light (intensity).
+```{r}
+data <- read_csv(files, id = "filename") |> # id argument adds a column with the file path
+  group_by(filename) |>
+  summarise(mean_temp = mean(Temp.C, na.rm = TRUE), #calculating summary statistics after grouped by filename
+            stdev_temp = sd(Temp.C, na.rm = TRUE),
+            mean_intensity = mean(Intensity.lux, na.rm = TRUE),
+            stdev_intensity = sd(Intensity.lux, na.rm = TRUE)) |>
+    #cleaning up filenames to remove excess
+  mutate(filename = str_remove(filename, "/Users/natalie/Desktop/UH/MBIO612/MBIO612_Fall26_NGS/Week_13/Data/homework/"),
+         filename = str_remove(filename, "\\.csv")) 
+data
+```
+
+
+Using map() to do the same thing
+```{r}
+data <- files |>
+  set_names() |> # names each list element with its file name
+  map(read_csv) |> #reads in each csv
+  list_rbind(names_to = "filename") |> #file names put in "filename" column
+  group_by(filename) |>
+  summarise(mean_temp = mean(Temp.C, na.rm = TRUE), #calculating summary statistics after grouped by filename
+            stdev_temp = sd(Temp.C, na.rm = TRUE),
+            mean_intensity = mean(Intensity.lux, na.rm = TRUE),
+            stdev_intensity = sd(Intensity.lux, na.rm = TRUE)) |>
+  #cleaning up filenames to remove excess
+  mutate(filename = str_remove(filename, "/Users/natalie/Desktop/UH/MBIO612/MBIO612_Fall26_NGS/Week_13/Data/homework/"),
+         filename = str_remove(filename, "\\.csv")) 
+data
+```
+
+Using a for loop to do the same thing:
+
+Path to files:
+```{r}
+files <- dir(path = HWpath, pattern = ".csv")
+```
+
+Pre-allocating space for the loop:
+```{r}
+#| output: FALSE
+
+# creating one row for each file and columns for filename, mean and standard deviation of temperature and intensity
+hw_data <- tibble(filename = rep(NA, length(files)),
+                  mean_temp = rep(NA, length(files)),
+                  stdev_temp = rep(NA, length(files)),
+                  mean_intensity = rep(NA, length(files)),
+                  stdev_intensity = rep(NA, length(files)))
+
+hw_data
+```
+Filling the table with summary statistics:
+```{r}
+for (i in seq_along(files)) { # loop over each file (1, 2, 3)
+  raw_data <- read_csv(paste0(HWpath, "/", files[i])) #reading in csv files from paths
+  hw_data$filename[i] <- files[i] #adding filename to filename column
+  hw_data$mean_temp[i] <- mean(raw_data$Temp.C, na.rm = TRUE) #calculating mean of temperature (+ other stats below)
+  hw_data$mean_intensity[i] <- mean(raw_data$Intensity.lux, na.rm = TRUE)
+  hw_data$stdev_temp[i] <- sd(raw_data$Temp.C, na.rm = TRUE)
+  hw_data$stdev_intensity[i] <- sd(raw_data$Intensity.lux, na.rm = TRUE)
+}
+hw_data <- hw_data |>
+  mutate(filename = str_remove(filename, "\\.csv")) #getting rid of .csv at end of filename
+hw_data
 ```
 
